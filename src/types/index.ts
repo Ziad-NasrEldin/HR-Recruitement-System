@@ -7,7 +7,7 @@ import type {
   ValidationStatus,
   ReminderType,
   CommissionStatus,
-} from "@/generated/prisma";
+} from "@/generated/prisma/client";
 
 export type {
   Role,
