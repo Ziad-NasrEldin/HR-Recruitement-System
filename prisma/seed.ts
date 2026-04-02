@@ -1,7 +1,8 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const prisma = new (PrismaClient as any)();
 
 async function main() {
   const email = process.env.SUPER_ADMIN_EMAIL || "ziad@hrrecruit.com";
