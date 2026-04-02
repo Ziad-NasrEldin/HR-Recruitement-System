@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,5 +5,204 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum Role {
+  SUPER_ADMIN
+  RECRUITER
+}
+
+enum OfferStatus {
+  ACTIVE
+  ON_HOLD
+}
+
+enum GradReq {
+  GRADUATE
+  UNDERGRADUATE
+  ANY
+}
+
+enum WorkModel {
+  WFH
+  ON_SITE
+  HYBRID
+}
+
+enum LeadStatus {
+  SOURCED
+  CONTACTED
+  VOICE_NOTE_SENT
+  VALIDATED
+  INTERVIEW_SCHEDULED
+  INTERVIEWED
+  ACCEPTED
+  REJECTED
+  IN_TRAINING
+  COMMISSION_ELIGIBLE
+  COMMISSION_PAID
+}
+
+enum ValidationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReminderType {
+  PRE_INTERVIEW
+  POST_INTERVIEW
+  DAY_10
+  DAY_15
+  DAY_30
+}
+
+enum CommissionStatus {
+  PENDING
+  ELIGIBLE
+  PAID
+}
+
+// ─── Models ──────────────────────────────────────────────
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  name             String
+  passwordHash     String
+  role             Role      @default(RECRUITER)
+  isActive         Boolean   @default(true)
+  trialEndsAt      DateTime?
+  accountExpiresAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  leads             Lead[]
+  commissions       Commission[]
+  followUpReminders FollowUpReminder[]
+
+  @@map("users")
+}
+
+model Offer {
+  id                    String      @id @default(cuid())
+  company               String
+  status                OfferStatus @default(ACTIVE)
+  language              String
+  accountType           String
+  graduationRequirement GradReq     @default(ANY)
+  location              String
+  workModel             WorkModel   @default(ON_SITE)
+  salaryDetails         Json
+  workingHours          String
+  shift                 String
+  daysOff               String
+  benefits              String
+  interviewProcess      String
+  formLink              String?
+  commissionAmount      Float
+  commissionPeriodDays  Int
+  requirements          String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  leads       Lead[]
+  commissions Commission[]
+
+  @@map("offers")
+}
+
+model Lead {
+  id                     String     @id @default(cuid())
+  recruiterId            String
+  offerId                String?
+  name                   String
+  phone                  String
+  email                  String?
+  whatsappNumber         String?
+  language               String
+  languageLevel          String?
+  graduationStatus       String
+  militaryStatus         String?
+  location               String
+  previousApplications   String?
+  status                 LeadStatus @default(SOURCED)
+  interviewDate          DateTime?
+  trainingStartDate      DateTime?
+  commissionEligibleDate DateTime?
+  notes                  String?
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  recruiter         User              @relation(fields: [recruiterId], references: [id])
+  offer             Offer?            @relation(fields: [offerId], references: [id])
+  voiceNotes        VoiceNote[]
+  followUpReminders FollowUpReminder[]
+  commission        Commission?
+
+  @@index([recruiterId])
+  @@index([offerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model VoiceNote {
+  id               String           @id @default(cuid())
+  leadId           String
+  fileUrl          String
+  language         String
+  duration         Int?
+  validationStatus ValidationStatus @default(PENDING)
+  validatorNotes   String?
+  createdAt        DateTime         @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@map("voice_notes")
+}
+
+model FollowUpReminder {
+  id          String       @id @default(cuid())
+  leadId      String
+  recruiterId String
+  type        ReminderType
+  dueDate     DateTime
+  isCompleted Boolean      @default(false)
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+
+  lead      Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  recruiter User @relation(fields: [recruiterId], references: [id])
+
+  @@index([leadId])
+  @@index([recruiterId])
+  @@index([dueDate])
+  @@index([isCompleted])
+  @@map("follow_up_reminders")
+}
+
+model Commission {
+  id           String           @id @default(cuid())
+  leadId       String           @unique
+  recruiterId  String
+  offerId      String
+  amount       Float
+  status       CommissionStatus @default(PENDING)
+  eligibleDate DateTime?
+  paidDate     DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  lead      Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  recruiter User  @relation(fields: [recruiterId], references: [id])
+  offer     Offer @relation(fields: [offerId], references: [id])
+
+  @@index([recruiterId])
+  @@index([offerId])
+  @@index([status])
+  @@map("commissions")
 }
