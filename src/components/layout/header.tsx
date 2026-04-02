@@ -17,7 +17,8 @@ export async function Header() {
   const session = await auth();
   if (!session?.user) return null;
 
-  const initials = session.user.name
+  const displayName = session.user.name ?? session.user.email ?? "?";
+  const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -43,7 +44,7 @@ export async function Header() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {session.user.name}
+                  {session.user.name ?? session.user.email}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {session.user.email}
