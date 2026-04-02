@@ -11,7 +11,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const raw = searchParams.get("callbackUrl") ?? "/dashboard";
+  const callbackUrl = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,7 +54,10 @@ export function LoginForm() {
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4 pt-6">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div
+              role="alert"
+              className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+            >
               {error}
             </div>
           )}

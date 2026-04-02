@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LoginForm } from "./login-form";
 
 export const metadata = {
@@ -16,7 +17,9 @@ export default function LoginPage() {
             Sign in to your account to continue
           </p>
         </div>
-        <LoginForm />
+        <Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-muted" />}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
