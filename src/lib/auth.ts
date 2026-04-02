@@ -35,11 +35,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         if (!user.isActive) {
-          throw new Error("Account is deactivated. Contact your administrator.");
+          throw new Error("ACCOUNT_ERROR:Account is deactivated. Contact your administrator.");
         }
 
         if (user.accountExpiresAt && new Date() > user.accountExpiresAt) {
-          throw new Error("Account has expired. Contact your administrator.");
+          throw new Error("ACCOUNT_ERROR:Account has expired. Contact your administrator.");
         }
 
         if (
@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user.trialEndsAt &&
           new Date() > user.trialEndsAt
         ) {
-          throw new Error("Trial period has ended. Contact your administrator.");
+          throw new Error("ACCOUNT_ERROR:Trial period has ended. Contact your administrator.");
         }
 
         const passwordMatch = await bcrypt.compare(password, user.passwordHash);
@@ -69,7 +69,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id as string;
+        token.id = user.id;
         token.role = user.role;
         token.isActive = user.isActive;
       }
@@ -77,10 +77,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        session.user.role = token.role as any;
-        session.user.isActive = token.isActive as boolean;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.isActive = token.isActive;
       }
       return session;
     },

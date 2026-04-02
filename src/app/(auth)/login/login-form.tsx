@@ -32,11 +32,11 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        setError(
-          result.error === "CredentialsSignin"
-            ? "Invalid email or password."
-            : result.error
-        );
+        if (result.error.startsWith("ACCOUNT_ERROR:")) {
+          setError(result.error.replace("ACCOUNT_ERROR:", ""));
+        } else {
+          setError("Invalid email or password.");
+        }
       } else {
         router.push(callbackUrl);
         router.refresh();
