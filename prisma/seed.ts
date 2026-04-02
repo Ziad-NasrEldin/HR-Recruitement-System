@@ -1,8 +1,11 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const prisma = new (PrismaClient as any)();
+// Prisma 7 generated constructor requires adapter/accelerateUrl in its type signature
+// but works at runtime with DATABASE_URL env var and no arguments.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error Prisma 7 constructor type mismatch with no-adapter usage
+const prisma = new PrismaClient();
 
 async function main() {
   const email = process.env.SUPER_ADMIN_EMAIL || "ziad@hrrecruit.com";
