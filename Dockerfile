@@ -42,6 +42,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Prisma schema + migrations for prisma migrate deploy
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 # Full node_modules needed for prisma CLI (WASM files, engines, etc.)
 COPY --from=builder /app/node_modules ./node_modules
