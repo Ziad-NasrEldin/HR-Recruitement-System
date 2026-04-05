@@ -13,6 +13,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
+    env_file: .env.production
     environment:
       POSTGRES_USER: hr_user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
