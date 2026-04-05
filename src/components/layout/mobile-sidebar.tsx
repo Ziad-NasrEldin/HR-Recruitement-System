@@ -11,6 +11,8 @@ import {
   DollarSign,
   BarChart3,
   Settings,
+  Sparkles,
+  Share2,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +33,8 @@ const iconMap: Record<string, LucideIcon> = {
   DollarSign,
   BarChart3,
   Settings,
+  Sparkles,
+  Share2,
 };
 
 interface MobileSidebarProps {
@@ -71,7 +75,10 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
             const Icon = iconMap[item.icon];
             const isActive =
               pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              (item.href !== "/dashboard" &&
+                item.href !== "/settings" &&
+                pathname.startsWith(item.href)) ||
+              (item.href === "/settings" && pathname === "/settings");
 
             return (
               <Link

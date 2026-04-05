@@ -9,6 +9,8 @@ import {
   DollarSign,
   BarChart3,
   Settings,
+  Sparkles,
+  Share2,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,6 +24,8 @@ const iconMap: Record<string, LucideIcon> = {
   DollarSign,
   BarChart3,
   Settings,
+  Sparkles,
+  Share2,
 };
 
 interface SidebarProps {
@@ -45,7 +49,10 @@ export function Sidebar({ role }: SidebarProps) {
           const Icon = iconMap[item.icon];
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            (item.href !== "/dashboard" &&
+              item.href !== "/settings" &&
+              pathname.startsWith(item.href)) ||
+            (item.href === "/settings" && pathname === "/settings");
 
           return (
             <Link

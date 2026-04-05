@@ -3,7 +3,16 @@
     "allow": [
       "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --use-npm --yes)",
       "Read(//e/GitHub/**)",
-      "Bash(npx create-next-app@latest hr-recruitment-system --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --use-npm --yes)"
+      "Bash(npx create-next-app@latest hr-recruitment-system --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --turbopack --use-npm --yes)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx prisma:*)",
+      "Bash(npm install:*)",
+      "Bash(pg_isready)",
+      "Bash(net start:*)",
+      "Bash(sc query:*)",
+      "Bash(Get-Service *postgres*)",
+      "Bash(\"C:/Program Files/PostgreSQL/18/bin/psql.exe\" -U postgres -h 127.0.0.1 -c \"ALTER USER postgres WITH PASSWORD ''postgres'';\")",
+      "Bash(npx tsx:*)"
     ]
   }
 }

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { MobileSidebar } from "./mobile-sidebar";
 import { LogOut } from "lucide-react";
 import { ROLE_LABELS } from "@/types";
+import { ReminderBell } from "@/components/reminders/reminder-bell";
 
 export async function Header() {
   const session = await auth();
@@ -30,6 +31,7 @@ export async function Header() {
       <MobileSidebar role={session.user.role} />
       <div className="flex-1" />
       <div className="flex items-center gap-4">
+        <ReminderBell />
         <DropdownMenu>
           {/*
             base-nova: DropdownMenuTrigger is @base-ui/react/menu Trigger which renders a <button>.

@@ -1,0 +1,32 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.production
+    ports:
+      - "3741:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hr_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: hr_recruitment
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5741:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hr_user -d hr_recruitment"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

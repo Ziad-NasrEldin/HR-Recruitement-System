@@ -102,8 +102,9 @@ model Offer {
   benefits              String
   interviewProcess      String
   formLink              String?
-  commissionAmount      Float
-  commissionPeriodDays  Int
+  commissionAmount      Float    @default(0)
+  commissionCurrency    String   @default("EGP")
+  commissionPeriodDays  Int      @default(30)
   requirements          String?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -157,6 +158,12 @@ model VoiceNote {
   duration         Int?
   validationStatus ValidationStatus @default(PENDING)
   validatorNotes   String?
+  // AI Assessment fields
+  transcription    String?
+  englishLevel     String?          // A2 / B1 / B2 / C1 / C2
+  accentNotes      String?
+  overallScore     String?          // PASS / FAIL / BORDERLINE
+  assessedAt       DateTime?
   createdAt        DateTime         @default(now())
 
   lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
@@ -205,4 +212,17 @@ model Commission {
   @@index([offerId])
   @@index([status])
   @@map("commissions")
+}
+
+// ─── Facebook Groups ──────────────────────────────────────
+
+model FacebookGroup {
+  id        String   @id @default(cuid())
+  name      String
+  url       String?
+  isActive  Boolean  @default(true)
+  source    String?  // "doc1", "doc2", "manual"
+  createdAt DateTime @default(now())
+
+  @@map("facebook_groups")
 }
