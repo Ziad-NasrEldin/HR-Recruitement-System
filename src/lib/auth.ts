@@ -2,15 +2,10 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  pages: {
-    signIn: "/login",
-  },
+  ...authConfig,
   providers: [
     Credentials({
       name: "credentials",
@@ -66,35 +61,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.isActive = user.isActive;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.isActive = token.isActive;
-      }
-      return session;
-    },
-    async authorized({ auth, request }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnLoginPage = request.nextUrl.pathname.startsWith("/login");
-
-      if (isOnLoginPage) {
-        if (isLoggedIn) {
-          return Response.redirect(new URL("/dashboard", request.nextUrl));
-        }
-        return true;
-      }
-
-      return isLoggedIn;
-    },
-  },
 });
