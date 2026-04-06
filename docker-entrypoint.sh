@@ -2,7 +2,7 @@
 set -e
 
 echo "→ Pushing database schema..."
-DATABASE_URL="$DATABASE_URL" ./node_modules/.bin/prisma db push --skip-generate
+DATABASE_URL="$DATABASE_URL" ./node_modules/.bin/prisma db push --accept-data-loss
 
 echo "→ Seeding database..."
 DATABASE_URL="$DATABASE_URL" ./node_modules/.bin/tsx prisma/seed.ts || true
