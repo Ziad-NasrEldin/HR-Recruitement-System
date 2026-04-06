@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig, User } from "next-auth";
 
 export const authConfig = {
   session: {
@@ -12,17 +12,18 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as { role?: string }).role;
-        token.isActive = (user as { isActive?: boolean }).isActive;
+        const u = user as User;
+        token.id = u.id!;
+        token.role = u.role;
+        token.isActive = u.isActive;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.isActive = token.isActive as boolean;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.isActive = token.isActive;
       }
       return session;
     },
