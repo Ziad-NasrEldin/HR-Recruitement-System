@@ -14,9 +14,7 @@ function extractGroupUrl(link: string): string | null {
   try {
     const url = new URL(link);
     if (!url.hostname.includes("facebook.com")) return null;
-    // Must contain /groups/
     if (!url.pathname.includes("/groups/")) return null;
-    // Rebuild clean URL: just origin + /groups/slug_or_id
     const parts = url.pathname.split("/").filter(Boolean);
     const groupsIdx = parts.indexOf("groups");
     if (groupsIdx === -1 || !parts[groupsIdx + 1]) return null;
@@ -26,20 +24,44 @@ function extractGroupUrl(link: string): string | null {
   }
 }
 
+/** Search DuckDuckGo HTML for a Facebook group URL — no API key required */
+async function searchGroupUrl(groupName: string): Promise<{ url: string | null; error?: string }> {
+  try {
+    const query = encodeURIComponent(`"${groupName}" site:facebook.com/groups`);
+    const res = await fetch(`https://html.duckduckgo.com/html/?q=${query}`, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      signal: AbortSignal.timeout(12000),
+    });
+
+    if (!res.ok) return { url: null, error: `Search returned HTTP ${res.status}` };
+
+    const html = await res.text();
+
+    // Extract facebook.com/groups URLs from the result HTML
+    const matches = html.match(/https?:\/\/(?:www\.)?facebook\.com\/groups\/[^\s"'<>&?#]+/g);
+    if (!matches || matches.length === 0) return { url: null };
+
+    for (const match of matches) {
+      const clean = extractGroupUrl(match);
+      if (clean) return { url: clean };
+    }
+
+    return { url: null };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Request failed";
+    return { url: null, error: msg };
+  }
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (session.user.role !== "SUPER_ADMIN") return Response.json({ error: "Forbidden" }, { status: 403 });
-
-  const apiKey = process.env.GOOGLE_CSE_KEY;
-  const cx = process.env.GOOGLE_CSE_CX;
-
-  if (!apiKey || !cx) {
-    return Response.json(
-      { error: "Google Custom Search is not configured. Add GOOGLE_CSE_KEY and GOOGLE_CSE_CX to your environment." },
-      { status: 503 }
-    );
-  }
 
   let body: { ids?: string[] };
   try {
@@ -52,11 +74,7 @@ export async function POST(request: NextRequest) {
   if (!Array.isArray(ids) || ids.length === 0) {
     return Response.json({ error: "ids array is required" }, { status: 400 });
   }
-  if (ids.length > 100) {
-    return Response.json({ error: "Maximum 100 groups per request (Google CSE free tier limit)" }, { status: 400 });
-  }
 
-  // Fetch group names from DB
   const groups = await prisma.facebookGroup.findMany({
     where: { id: { in: ids }, url: null, isDeprecated: false },
     select: { id: true, name: true },
@@ -64,28 +82,14 @@ export async function POST(request: NextRequest) {
 
   const results: SearchResult[] = [];
 
-  for (const group of groups) {
-    try {
-      const query = encodeURIComponent(`site:facebook.com/groups "${group.name}"`);
-      const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}&num=1`;
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    const { url, error } = await searchGroupUrl(group.name);
+    results.push({ id: group.id, name: group.name, foundUrl: url, error });
 
-      const res = await fetch(apiUrl);
-      const data = await res.json() as {
-        items?: { link: string }[];
-        error?: { message: string };
-      };
-
-      if (!res.ok) {
-        results.push({ id: group.id, name: group.name, foundUrl: null, error: data.error?.message ?? "Search failed" });
-        continue;
-      }
-
-      const firstLink = data.items?.[0]?.link ?? null;
-      const cleanUrl = firstLink ? extractGroupUrl(firstLink) : null;
-
-      results.push({ id: group.id, name: group.name, foundUrl: cleanUrl });
-    } catch {
-      results.push({ id: group.id, name: group.name, foundUrl: null, error: "Network error" });
+    // Respect DuckDuckGo rate limits — 1s gap between requests
+    if (i < groups.length - 1) {
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 

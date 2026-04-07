@@ -496,7 +496,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Searching Google for group URLs… {findUrlsProgress}/{findUrlsTotal}
+                  Searching for group URLs… {findUrlsProgress}/{findUrlsTotal}
                 </div>
                 <div className="h-2 rounded-full bg-muted overflow-hidden">
                   <div
