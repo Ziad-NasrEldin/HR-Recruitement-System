@@ -15,6 +15,7 @@ import {
   Users,
   Pause,
   ArrowLeft,
+  Ban,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,6 +56,8 @@ export function PostingSessionClient({ groups }: Props) {
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(
     new Set(groups.map((g) => g.id))
   );
+  const [deprecatingId, setDeprecatingId] = useState<string | null>(null);
+  const [deprecatedIds, setDeprecatedIds] = useState<Set<string>>(new Set());
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -161,6 +164,25 @@ export function PostingSessionClient({ groups }: Props) {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function deprecateAndSkip(group: Group) {
+    setDeprecatingId(group.id);
+    try {
+      await fetch(`/api/facebook-groups/${group.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          isDeprecated: true,
+          deprecationReason: "Inaccessible during posting session",
+        }),
+      });
+      setDeprecatedIds((prev) => new Set(prev).add(group.id));
+    } finally {
+      setDeprecatingId(null);
+    }
+    // Skip to next group
+    skipGroup();
   }
 
   function toggleGroup(id: string) {
@@ -424,6 +446,26 @@ export function PostingSessionClient({ groups }: Props) {
                 </Button>
               )}
             </div>
+
+            {/* Deprecation prompt */}
+            {deprecatedIds.has(currentGroup.id) ? (
+              <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                <Ban className="h-3.5 w-3.5 text-amber-500" />
+                Group marked as deprecated and skipped.
+              </p>
+            ) : (
+              <div className="flex items-center gap-2 pt-1 border-t">
+                <p className="text-xs text-muted-foreground flex-1">Group unreachable?</p>
+                <button
+                  onClick={() => deprecateAndSkip(currentGroup)}
+                  disabled={deprecatingId === currentGroup.id}
+                  className="text-xs text-amber-600 hover:text-amber-700 flex items-center gap-1 disabled:opacity-50"
+                >
+                  <Ban className="h-3 w-3" />
+                  {deprecatingId === currentGroup.id ? "Marking…" : "Mark as deprecated"}
+                </button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

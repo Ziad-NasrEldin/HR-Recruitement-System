@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Send, SkipForward, X, Play, CheckCircle2 } from "lucide-react";
+import { Send, SkipForward, X, Play, CheckCircle2, Bell } from "lucide-react";
 import {
   getCampaign,
   clearCampaign,
   getTimeLeft,
   advanceCampaign,
   skipCampaign,
+  addToHistory,
   type Campaign,
 } from "@/lib/campaign-store";
+
+const NOTIF_PREF_KEY = "notifications_dismissed";
 
 function formatTime(secs: number): string {
   const m = Math.floor(secs / 60);
@@ -22,7 +25,38 @@ export function CampaignWidget() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [done, setDone] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission | null>(null);
+  const [showNotifBanner, setShowNotifBanner] = useState(false);
   const audioRef = useRef<AudioContext | null>(null);
+
+  // Check notification permission on mount
+  useEffect(() => {
+    if (typeof Notification !== "undefined") {
+      setNotifPermission(Notification.permission);
+    }
+  }, []);
+
+  // Show notification banner when campaign starts and permission not yet granted
+  useEffect(() => {
+    const dismissed = localStorage.getItem(NOTIF_PREF_KEY) === "true";
+    if (campaign && notifPermission === "default" && !dismissed) {
+      setShowNotifBanner(true);
+    } else {
+      setShowNotifBanner(false);
+    }
+  }, [campaign, notifPermission]);
+
+  async function requestNotifications() {
+    if (typeof Notification === "undefined") return;
+    const result = await Notification.requestPermission();
+    setNotifPermission(result);
+    setShowNotifBanner(false);
+  }
+
+  function dismissNotifBanner() {
+    localStorage.setItem(NOTIF_PREF_KEY, "true");
+    setShowNotifBanner(false);
+  }
 
   // Sync from localStorage every second
   useEffect(() => {
@@ -33,6 +67,16 @@ export function CampaignWidget() {
         return;
       }
       if (c.currentIndex >= c.groups.length) {
+        // Save to history before clearing
+        addToHistory({
+          id: c.startedAt.toString(),
+          offerLabel: c.offerLabel,
+          startedAt: c.startedAt,
+          completedAt: Date.now(),
+          totalGroups: c.groups.length,
+          postedCount: c.postedCount ?? 0,
+          skippedCount: c.skippedCount ?? 0,
+        });
         setCampaign(null);
         clearCampaign();
         setDone(true);
@@ -67,13 +111,28 @@ export function CampaignWidget() {
     }
   }, []);
 
+  // Fire desktop notification when it's time to post
+  const fireNotification = useCallback((groupName: string) => {
+    if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+    try {
+      new Notification("Time to post! 📢", {
+        body: `Group: ${groupName}`,
+        icon: "/favicon.ico",
+      });
+    } catch {
+      // Notifications blocked — no-op
+    }
+  }, []);
+
   const prevTimeLeft = useRef<number>(9999);
   useEffect(() => {
     if (prevTimeLeft.current > 0 && timeLeft === 0 && campaign) {
       playBeep();
+      const group = campaign.groups[campaign.currentIndex];
+      if (group) fireNotification(group.name);
     }
     prevTimeLeft.current = timeLeft;
-  }, [timeLeft, campaign, playBeep]);
+  }, [timeLeft, campaign, playBeep, fireNotification]);
 
   function handlePost() {
     if (!campaign) return;
@@ -106,6 +165,17 @@ export function CampaignWidget() {
   }
 
   function handleStop() {
+    if (campaign) {
+      addToHistory({
+        id: campaign.startedAt.toString(),
+        offerLabel: campaign.offerLabel,
+        startedAt: campaign.startedAt,
+        completedAt: Date.now(),
+        totalGroups: campaign.groups.length,
+        postedCount: campaign.postedCount ?? 0,
+        skippedCount: campaign.skippedCount ?? 0,
+      });
+    }
     clearCampaign();
     setCampaign(null);
   }
@@ -139,6 +209,27 @@ export function CampaignWidget() {
         }`}
         style={{ animationDuration: "1.4s" }}
       >
+        {/* Notification banner */}
+        {showNotifBanner && (
+          <div className="flex items-center justify-between gap-2 px-3 py-2 bg-muted/60 rounded-t-2xl border-b text-xs">
+            <div className="flex items-center gap-1.5">
+              <Bell className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-muted-foreground">Enable desktop notifications?</span>
+            </div>
+            <div className="flex gap-1">
+              <button
+                onClick={requestNotifications}
+                className="px-2 py-0.5 rounded bg-primary text-primary-foreground font-medium"
+              >
+                Allow
+              </button>
+              <button onClick={dismissNotifBanner} className="px-1.5 py-0.5 rounded hover:bg-muted text-muted-foreground">
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 pt-3 pb-1">
           <div className="flex items-center gap-1.5">
@@ -193,21 +284,36 @@ export function CampaignWidget() {
 
   // ── Counting down ─────────────────────────────────────────
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 rounded-full border bg-card px-4 py-2 shadow-md text-sm">
-      <Play className="h-3.5 w-3.5 text-primary" />
-      <span className="font-medium text-foreground">Campaign</span>
-      <span className="text-muted-foreground">·</span>
-      <span className="font-mono font-medium tabular-nums">{formatTime(timeLeft)}</span>
-      <span className="text-muted-foreground text-xs">
-        ({done_count}/{total})
-      </span>
-      <button
-        onClick={handleStop}
-        className="ml-1 rounded-full p-0.5 hover:bg-muted transition-colors"
-        title="Stop campaign"
-      >
-        <X className="h-3.5 w-3.5 text-muted-foreground" />
-      </button>
+    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-1.5">
+      {showNotifBanner && (
+        <div className="flex items-center gap-2 rounded-xl border bg-card px-3 py-2 shadow-md text-xs">
+          <Bell className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-muted-foreground">Enable desktop notifications?</span>
+          <button
+            onClick={requestNotifications}
+            className="px-2 py-0.5 rounded bg-primary text-primary-foreground font-medium"
+          >
+            Allow
+          </button>
+          <button onClick={dismissNotifBanner} className="text-muted-foreground hover:text-foreground">✕</button>
+        </div>
+      )}
+      <div className="flex items-center gap-2.5 rounded-full border bg-card px-4 py-2 shadow-md text-sm">
+        <Play className="h-3.5 w-3.5 text-primary" />
+        <span className="font-medium text-foreground">Campaign</span>
+        <span className="text-muted-foreground">·</span>
+        <span className="font-mono font-medium tabular-nums">{formatTime(timeLeft)}</span>
+        <span className="text-muted-foreground text-xs">
+          ({done_count}/{total})
+        </span>
+        <button
+          onClick={handleStop}
+          className="ml-1 rounded-full p-0.5 hover:bg-muted transition-colors"
+          title="Stop campaign"
+        >
+          <X className="h-3.5 w-3.5 text-muted-foreground" />
+        </button>
+      </div>
     </div>
   );
 }

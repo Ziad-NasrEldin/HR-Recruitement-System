@@ -13,6 +13,7 @@ import {
   Settings,
   Sparkles,
   Share2,
+  Radio,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ const iconMap: Record<string, LucideIcon> = {
   Settings,
   Sparkles,
   Share2,
+  Radio,
 };
 
 interface MobileSidebarProps {

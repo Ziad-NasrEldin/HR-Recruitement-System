@@ -45,6 +45,12 @@ export const navItems: NavItem[] = [
     roles: ["SUPER_ADMIN"],
   },
   {
+    title: "Campaigns",
+    href: "/campaigns",
+    icon: "Radio",
+    roles: ["SUPER_ADMIN"],
+  },
+  {
     title: "Facebook Groups",
     href: "/settings/facebook-groups",
     icon: "Share2",

@@ -44,6 +44,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
+# Generated Prisma client (needed by seed script)
+COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
+
 # Full node_modules needed for prisma CLI (WASM files, engines, etc.)
 COPY --from=builder /app/node_modules ./node_modules
 

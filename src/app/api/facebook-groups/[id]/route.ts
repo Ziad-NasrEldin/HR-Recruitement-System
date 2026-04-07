@@ -19,7 +19,13 @@ export async function PUT(
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, url, isActive } = body as { name?: string; url?: string; isActive?: boolean };
+  const { name, url, isActive, isDeprecated, deprecationReason } = body as {
+    name?: string;
+    url?: string;
+    isActive?: boolean;
+    isDeprecated?: boolean;
+    deprecationReason?: string;
+  };
 
   const group = await prisma.facebookGroup.update({
     where: { id },
@@ -27,6 +33,11 @@ export async function PUT(
       ...(name !== undefined && { name: name.trim() }),
       ...(url !== undefined && { url: url.trim() || null }),
       ...(isActive !== undefined && { isActive }),
+      ...(isDeprecated !== undefined && {
+        isDeprecated,
+        deprecatedAt: isDeprecated ? new Date() : null,
+        deprecationReason: isDeprecated ? (deprecationReason?.trim() || null) : null,
+      }),
     },
   });
 

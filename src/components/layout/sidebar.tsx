@@ -11,6 +11,7 @@ import {
   Settings,
   Sparkles,
   Share2,
+  Radio,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const iconMap: Record<string, LucideIcon> = {
   Settings,
   Sparkles,
   Share2,
+  Radio,
 };
 
 interface SidebarProps {

@@ -217,12 +217,15 @@ model Commission {
 // ─── Facebook Groups ──────────────────────────────────────
 
 model FacebookGroup {
-  id        String   @id @default(cuid())
-  name      String
-  url       String?
-  isActive  Boolean  @default(true)
-  source    String?  // "doc1", "doc2", "manual"
-  createdAt DateTime @default(now())
+  id                String    @id @default(cuid())
+  name              String
+  url               String?
+  isActive          Boolean   @default(true)
+  isDeprecated      Boolean   @default(false)
+  deprecatedAt      DateTime?
+  deprecationReason String?
+  source            String?   // "doc1", "doc2", "manual", "excel"
+  createdAt         DateTime  @default(now())
 
   @@map("facebook_groups")
 }

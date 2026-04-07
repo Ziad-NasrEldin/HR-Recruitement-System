@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Sparkles, Copy, CheckCheck, Loader2, RefreshCw,
-  AlertCircle, Send, History, ChevronDown, ChevronUp, Clock, Rocket,
+  AlertCircle, Send, History, ChevronDown, ChevronUp, Clock, Bookmark,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { saveCampaign, type CampaignGroup } from "@/lib/campaign-store";
+import { savePosts } from "@/lib/campaign-store";
+import Link from "next/link";
 
 interface Offer {
   id: string;
@@ -67,8 +68,7 @@ export function PostGeneratorClient({ offers }: Props) {
   const [history, setHistory] = useState<PostSession[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
-  const [campaignLoading, setCampaignLoading] = useState(false);
-  const [campaignMsg, setCampaignMsg] = useState<string | null>(null);
+  const [postsSaved, setPostsSaved] = useState(false);
 
   useEffect(() => {
     setHistory(loadHistory());
@@ -150,64 +150,12 @@ export function PostGeneratorClient({ offers }: Props) {
     router.push(`/post-generator/session?post=${encodeURIComponent(postText)}`);
   }
 
-  async function startCampaign() {
-    if (!selectedOfferId) return;
-    setCampaignLoading(true);
-    setCampaignMsg(null);
-
-    try {
-      // 1. Generate posts
-      const postsRes = await fetch("/api/ai/generate-posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ offerId: selectedOfferId }),
-      });
-      const postsData = await postsRes.json() as { posts?: string[]; error?: string };
-      if (!postsRes.ok) throw new Error(postsData.error ?? "Generation failed");
-      const generatedPosts = postsData.posts ?? [];
-      setPosts(generatedPosts);
-
-      // Save to history
-      const session: PostSession = {
-        id: Date.now().toString(),
-        offerLabel: `${selectedOffer?.company} — ${selectedOffer?.accountType} (${selectedOffer?.language})`,
-        posts: generatedPosts,
-        createdAt: new Date().toISOString(),
-      };
-      saveToHistory(session);
-      setHistory(loadHistory());
-      setActiveHistoryId(session.id);
-
-      // 2. Fetch active groups with URLs
-      const groupsRes = await fetch("/api/facebook-groups");
-      const groupsData = await groupsRes.json() as { groups?: Array<{ id: string; name: string; url: string | null; isActive: boolean }> };
-      const groups: CampaignGroup[] = (groupsData.groups ?? [])
-        .filter((g) => g.isActive && g.url)
-        .map((g) => ({ id: g.id, name: g.name, url: g.url! }));
-
-      if (groups.length === 0) {
-        setCampaignMsg("No groups with URLs found. Add URLs in Settings → Facebook Groups.");
-        return;
-      }
-
-      // 3. Save campaign to localStorage — widget picks it up automatically
-      saveCampaign({
-        posts: generatedPosts,
-        groups,
-        currentIndex: 0,
-        intervalMinutes: 10,
-        lastPostAt: null,
-        isActive: true,
-        offerLabel: session.offerLabel,
-        startedAt: Date.now(),
-      });
-
-      setCampaignMsg(`Campaign started! ${groups.length} groups queued · POST NOW button ready.`);
-    } catch (err) {
-      setCampaignMsg(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setCampaignLoading(false);
-    }
+  function handleSaveForCampaign() {
+    if (!posts.length || !selectedOffer) return;
+    const offerLabel = `${selectedOffer.company} — ${selectedOffer.accountType} (${selectedOffer.language})`;
+    savePosts({ posts, offerLabel, savedAt: Date.now() });
+    setPostsSaved(true);
+    setTimeout(() => setPostsSaved(false), 5000);
   }
 
   function formatDate(iso: string) {
@@ -309,7 +257,7 @@ export function PostGeneratorClient({ offers }: Props) {
             <Button
               className="flex-1"
               onClick={generatePosts}
-              disabled={!selectedOfferId || loading || campaignLoading}
+              disabled={!selectedOfferId || loading}
               variant="outline"
             >
               {loading ? (
@@ -322,24 +270,20 @@ export function PostGeneratorClient({ offers }: Props) {
             </Button>
             <Button
               className="flex-1"
-              onClick={startCampaign}
-              disabled={!selectedOfferId || loading || campaignLoading}
+              onClick={handleSaveForCampaign}
+              disabled={posts.length === 0 || loading}
             >
-              {campaignLoading ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Starting…</>
-              ) : (
-                <><Rocket className="h-4 w-4" /> Generate &amp; Start Campaign</>
-              )}
+              <Bookmark className="h-4 w-4" />
+              Save for Campaign
             </Button>
           </div>
 
-          {campaignMsg && (
-            <div className={`rounded-lg px-4 py-3 text-sm ${
-              campaignMsg.includes("started")
-                ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200"
-                : "bg-destructive/5 text-destructive border border-destructive/20"
-            }`}>
-              {campaignMsg}
+          {postsSaved && (
+            <div className="rounded-lg px-4 py-3 text-sm bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 flex items-center justify-between gap-3">
+              <span>Posts saved! Ready to launch a campaign.</span>
+              <Link href="/campaigns" className="font-medium underline underline-offset-2 hover:no-underline shrink-0">
+                Go to Campaigns →
+              </Link>
             </div>
           )}
         </CardContent>

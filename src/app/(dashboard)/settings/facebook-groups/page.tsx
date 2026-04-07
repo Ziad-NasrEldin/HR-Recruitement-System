@@ -10,7 +10,7 @@ export default async function FacebookGroupsPage() {
   if (session?.user?.role !== "SUPER_ADMIN") redirect("/dashboard");
 
   const groups = await prisma.facebookGroup.findMany({
-    orderBy: [{ isActive: "desc" }, { name: "asc" }],
+    orderBy: [{ isDeprecated: "asc" }, { isActive: "desc" }, { name: "asc" }],
   });
 
   return <FacebookGroupsClient initialGroups={groups} />;
