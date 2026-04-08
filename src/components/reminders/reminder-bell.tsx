@@ -15,6 +15,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+interface Reminder {
+  id: string;
+  type: string;
+  dueDate: string;
+  isCompleted: boolean;
+  lead: { id: string; name: string; phone: string };
+  recruiter: { id: string; name: string };
+}
+
 const REMINDER_TYPE_LABELS: Record<string, string> = {
   PRE_INTERVIEW: "Pre-Interview",
   POST_INTERVIEW: "Post-Interview",
@@ -82,6 +91,7 @@ export function ReminderBell() {
   const t = useTranslations("facebookGroups");
   const tReminders = useTranslations("reminders");
   const locale = useLocale();
+  const [reminders, setReminders] = useState<Reminder[]>([]);
   const [overdue, setOverdue] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
