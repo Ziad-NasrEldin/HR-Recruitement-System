@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
+  const t = useTranslations("commissions");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -60,10 +62,10 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
         value={status}
         onChange={(e) => router.push(buildUrl({ status: e.target.value }))}
       >
-        <option value="">All statuses</option>
-        <option value="PENDING">Pending</option>
-        <option value="ELIGIBLE">Eligible</option>
-        <option value="PAID">Paid</option>
+        <option value="">{t("filters.allStatuses")}</option>
+        <option value="PENDING">{t("status.PENDING")}</option>
+        <option value="ELIGIBLE">{t("status.ELIGIBLE")}</option>
+        <option value="PAID">{t("status.PAID")}</option>
       </Select>
 
       {/* Offer */}
@@ -72,7 +74,7 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
         value={offerId}
         onChange={(e) => router.push(buildUrl({ offerId: e.target.value }))}
       >
-        <option value="">All offers</option>
+        <option value="">{t("filters.allOffers")}</option>
         {offers.map((o) => (
           <option key={o.id} value={o.id}>
             {o.company} — {o.accountType}
@@ -87,7 +89,7 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
           value={recruiterId}
           onChange={(e) => router.push(buildUrl({ recruiterId: e.target.value }))}
         >
-          <option value="">All recruiters</option>
+          <option value="">{t("filters.allRecruiters")}</option>
           {recruiters.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
@@ -114,7 +116,7 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={() => router.push("/commissions")}>
           <X className="h-4 w-4 mr-1" />
-          Clear
+          {t("filters.clear")}
         </Button>
       )}
     </div>

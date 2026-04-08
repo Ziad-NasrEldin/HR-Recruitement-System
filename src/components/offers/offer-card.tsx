@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { MapPin, Globe, Briefcase, Users, DollarSign } from "lucide-react";
 import {
   Card,
@@ -25,13 +26,8 @@ interface OfferCardProps {
   offer: OfferWithCount;
 }
 
-const WORK_MODEL_LABELS: Record<string, string> = {
-  WFH: "Work From Home",
-  ON_SITE: "On Site",
-  HYBRID: "Hybrid",
-};
-
-export function OfferCard({ offer }: OfferCardProps) {
+export async function OfferCard({ offer }: OfferCardProps) {
+  const t = await getTranslations("offers");
   const salary = offer.salaryDetails as SalaryDetails | null;
 
   return (
@@ -56,7 +52,7 @@ export function OfferCard({ offer }: OfferCardProps) {
           </div>
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Briefcase className="h-3.5 w-3.5 shrink-0" />
-            <span>{WORK_MODEL_LABELS[offer.workModel] ?? offer.workModel}</span>
+            <span>{t(`workModel.${offer.workModel}`)}</span>
           </div>
           {salary && (
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -70,7 +66,7 @@ export function OfferCard({ offer }: OfferCardProps) {
 
         <CardFooter className="text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5 mr-1.5" />
-          {offer._count.leads} candidate{offer._count.leads !== 1 ? "s" : ""}
+          {t("candidates", { count: offer._count.leads })}
         </CardFooter>
       </Card>
     </Link>

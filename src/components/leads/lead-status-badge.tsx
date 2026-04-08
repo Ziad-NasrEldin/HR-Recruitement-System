@@ -1,5 +1,5 @@
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
-import { LEAD_STATUS_LABELS } from "@/types";
 import type { LeadStatus } from "@/generated/prisma/client";
 
 const STATUS_CLASSES: Record<LeadStatus, string> = {
@@ -21,9 +21,11 @@ interface LeadStatusBadgeProps {
 }
 
 export function LeadStatusBadge({ status }: LeadStatusBadgeProps) {
+  const t = useTranslations("leads");
+
   return (
     <Badge variant="outline" className={STATUS_CLASSES[status]}>
-      {LEAD_STATUS_LABELS[status]}
+      {t(`status.${status}`)}
     </Badge>
   );
 }

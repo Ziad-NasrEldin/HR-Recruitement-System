@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,11 @@ interface LeadFiltersProps {
   isSuperAdmin?: boolean;
 }
 
-const STATUS_OPTIONS = Object.entries(LEAD_STATUS_LABELS) as [string, string][];
-
 export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: LeadFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("leads");
 
   const createQueryString = useCallback(
     (updates: Record<string, string | null>) => {
@@ -58,7 +58,7 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
     <div className="flex flex-wrap items-center gap-2">
       <Input
         className="w-48"
-        placeholder="Search name or phone…"
+        placeholder={t("search.placeholder")}
         defaultValue={searchParams.get("search") ?? ""}
         onBlur={(e) => handleChange("search", e.target.value)}
         onKeyDown={(e) => {
@@ -73,9 +73,9 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
         onChange={(e) => handleChange("status", e.target.value)}
         aria-label="Filter by status"
       >
-        <option value="">All statuses</option>
-        {STATUS_OPTIONS.map(([value, label]) => (
-          <option key={value} value={value}>{label}</option>
+        <option value="">{t("filters.allStatuses")}</option>
+        {Object.entries(LEAD_STATUS_LABELS).map(([value, _]) => (
+          <option key={value} value={value}>{t(`status.${value}`)}</option>
         ))}
       </Select>
 
@@ -85,7 +85,7 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
         onChange={(e) => handleChange("offerId", e.target.value)}
         aria-label="Filter by offer"
       >
-        <option value="">All offers</option>
+        <option value="">{t("filters.allOffers")}</option>
         {offers.map((o) => (
           <option key={o.id} value={o.id}>{o.company} — {o.accountType}</option>
         ))}
@@ -98,7 +98,7 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
           onChange={(e) => handleChange("recruiterId", e.target.value)}
           aria-label="Filter by recruiter"
         >
-          <option value="">All recruiters</option>
+          <option value="">{t("filters.allRecruiters")}</option>
           {recruiters.map((r) => (
             <option key={r.id} value={r.id}>{r.name}</option>
           ))}
@@ -110,20 +110,20 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
         className="w-40"
         value={searchParams.get("dateFrom") ?? ""}
         onChange={(e) => handleChange("dateFrom", e.target.value)}
-        aria-label="From date"
+        aria-label={t("filters.fromDate")}
       />
       <Input
         type="date"
         className="w-40"
         value={searchParams.get("dateTo") ?? ""}
         onChange={(e) => handleChange("dateTo", e.target.value)}
-        aria-label="To date"
+        aria-label={t("filters.toDate")}
       />
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={() => router.push(pathname)} className="gap-1">
           <X className="h-3.5 w-3.5" />
-          Clear
+          {t("clear")}
         </Button>
       )}
     </div>

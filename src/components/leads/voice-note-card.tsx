@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Sparkles, CheckCircle2, XCircle, Clock, ChevronDown, ChevronUp,
   ExternalLink, Pencil, Loader2,
@@ -14,17 +15,17 @@ import type { VoiceNote } from "@/generated/prisma/client";
 
 const STATUS_CONFIG = {
   APPROVED: {
-    label: "Approved",
+    labelKey: "approved",
     icon: CheckCircle2,
     className: "text-emerald-600",
   },
   REJECTED: {
-    label: "Rejected",
+    labelKey: "rejected",
     icon: XCircle,
     className: "text-destructive",
   },
   PENDING: {
-    label: "Pending Review",
+    labelKey: "pendingReview",
     icon: Clock,
     className: "text-amber-600",
   },
@@ -68,6 +69,7 @@ interface Props {
 }
 
 export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
+  const t = useTranslations("leads.voiceNote");
   const [vn, setVn] = useState<VoiceNote>(initial);
   const [expanded, setExpanded] = useState(false);
   const [assessing, setAssessing] = useState(false);
@@ -156,12 +158,12 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
               </span>
             )}
             <span className={cn("text-xs font-medium", statusCfg.className)}>
-              {statusCfg.label}
+              {t(statusCfg.labelKey)}
             </span>
           </div>
           <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
-            {vn.duration && <span>{formatDuration(vn.duration)}</span>}
-            {hasAI && <span>Assessed {formatDate(vn.assessedAt)}</span>}
+            {vn.duration && <span>{t("duration")}: {formatDuration(vn.duration)}</span>}
+            {hasAI && <span>{t("assessed", { date: formatDate(vn.assessedAt) })}</span>}
           </div>
         </div>
 
@@ -174,14 +176,14 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
               size="sm"
               onClick={runAssessment}
               disabled={assessing}
-              title="Run AI Assessment"
+              title={t("runAIAssessment")}
             >
               {assessing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
                 <Sparkles className="h-3.5 w-3.5" />
               )}
-              <span className="ml-1 hidden sm:inline">Assess</span>
+              <span className="ml-1 hidden sm:inline">{t("assess")}</span>
             </Button>
           )}
           {hasAI && !assessing && (
@@ -190,7 +192,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
               size="sm"
               onClick={runAssessment}
               disabled={assessing}
-              title="Re-run AI Assessment"
+              title={t("rerunAIAssessment")}
             >
               <Sparkles className="h-3.5 w-3.5" />
             </Button>
@@ -202,7 +204,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
               variant="ghost"
               size="sm"
               onClick={() => setOverrideOpen((o) => !o)}
-              title="Override decision"
+              title={t("override")}
             >
               <Pencil className="h-3.5 w-3.5" />
             </Button>
@@ -214,7 +216,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-7 w-7 items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            title="Open audio file"
+            title={t("openAudioFile")}
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
@@ -225,7 +227,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
               variant="ghost"
               size="sm"
               onClick={() => setExpanded((e) => !e)}
-              title={expanded ? "Collapse" : "Show transcript"}
+              title={expanded ? t("collapse") : t("showTranscript")}
             >
               {expanded ? (
                 <ChevronUp className="h-3.5 w-3.5" />
@@ -240,7 +242,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
       {/* Assessment error */}
       {assessError && (
         <div className="border-t px-4 py-2 text-xs text-destructive bg-destructive/5">
-          {assessError}
+          {t("assessmentFailed")}
         </div>
       )}
 
@@ -249,13 +251,13 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
         <div className="border-t px-4 py-3 space-y-3">
           {vn.accentNotes && (
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">Accent &amp; Fluency</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">{t("accentFluency")}</p>
               <p className="text-sm">{vn.accentNotes}</p>
             </div>
           )}
           {vn.transcription && (
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">Transcription</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">{t("transcription")}</p>
               <p className="text-sm leading-relaxed bg-muted/40 rounded-md p-3 whitespace-pre-wrap">
                 {vn.transcription}
               </p>
@@ -263,7 +265,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
           )}
           {vn.validatorNotes && (
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">Reviewer Notes</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">{t("reviewerNotes")}</p>
               <p className="text-sm italic text-muted-foreground">{vn.validatorNotes}</p>
             </div>
           )}
@@ -274,19 +276,19 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
       {overrideOpen && isSuperAdmin && (
         <div className="border-t px-4 py-3 space-y-3 bg-muted/20">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Override Decision
+            {t("overrideDecision")}
           </p>
           <Select
             value={overrideStatus}
             onChange={(e) => setOverrideStatus(e.target.value)}
             className="w-44"
           >
-            <option value="PENDING">Pending</option>
-            <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
+            <option value="PENDING">{t("pendingReview")}</option>
+            <option value="APPROVED">{t("approved")}</option>
+            <option value="REJECTED">{t("rejected")}</option>
           </Select>
           <Textarea
-            placeholder="Reviewer notes (optional)…"
+            placeholder={t("reviewerNotesOptional")}
             value={overrideNotes}
             onChange={(e) => setOverrideNotes(e.target.value)}
             rows={2}
@@ -295,14 +297,14 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
           <div className="flex gap-2">
             <Button size="sm" onClick={saveOverride} disabled={saving}>
               {saving && <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" />}
-              Save Override
+              {t("saveOverride")}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setOverrideOpen(false)}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </div>
         </div>

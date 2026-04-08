@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { LeadCard } from "@/components/leads/lead-card";
@@ -25,6 +26,8 @@ interface PageProps {
 export default async function LeadsPage({ searchParams }: PageProps) {
   const session = await auth();
   const params = await searchParams;
+  const t = await getTranslations("leads");
+  const tCommon = await getTranslations("common");
 
   const search = params.search;
   const status = params.status as LeadStatus | undefined;
@@ -109,14 +112,14 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {total} candidate{total !== 1 ? "s" : ""} found
+            {t("found", { count: total })}
           </p>
         </div>
         <Link href="/leads/new" className={cn(buttonVariants())}>
           <Plus className="h-4 w-4" />
-          Add Lead
+          {t("addLead")}
         </Link>
       </div>
 
@@ -130,9 +133,9 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       {/* Grid */}
       {leads.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-          <p className="text-muted-foreground">No leads match your filters.</p>
+          <p className="text-muted-foreground">{t("empty")}</p>
           <Link href="/leads/new" className={cn(buttonVariants({ variant: "outline" }), "mt-4")}>
-            Add your first lead
+            {t("addFirst")}
           </Link>
         </div>
       ) : (
@@ -148,15 +151,15 @@ export default async function LeadsPage({ searchParams }: PageProps) {
         <div className="flex items-center justify-center gap-2">
           {page > 1 && (
             <Link href={buildPageUrl(page - 1)} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              Previous
+              {tCommon("previous")}
             </Link>
           )}
           <span className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
+            {t("pagination", { current: page, total: totalPages })}
           </span>
           {page < totalPages && (
             <Link href={buildPageUrl(page + 1)} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              Next
+              {tCommon("next")}
             </Link>
           )}
         </div>

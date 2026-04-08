@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +22,7 @@ interface OfferFormProps {
 }
 
 export function OfferForm({ offer }: OfferFormProps) {
+  const t = useTranslations("offers");
   const router = useRouter();
   const isEdit = !!offer;
 
@@ -72,7 +74,7 @@ export function OfferForm({ offer }: OfferFormProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Something went wrong.");
+        setError(data.error ?? t("saveFailed"));
         return;
       }
 
@@ -80,7 +82,7 @@ export function OfferForm({ offer }: OfferFormProps) {
       router.push(`/offers/${data.offer.id}`);
       router.refresh();
     } catch {
-      setError("Network error. Please try again.");
+      setError(t("networkError"));
     } finally {
       setLoading(false);
     }
@@ -97,11 +99,11 @@ export function OfferForm({ offer }: OfferFormProps) {
       {/* Basic Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+          <CardTitle>{t("form.basicInfo")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="company">Company *</Label>
+            <Label htmlFor="company">{t("form.company")} *</Label>
             <Input
               id="company"
               value={form.company}
@@ -112,7 +114,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="accountType">Account Type *</Label>
+            <Label htmlFor="accountType">{t("form.accountType")} *</Label>
             <Input
               id="accountType"
               value={form.accountType}
@@ -123,7 +125,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="language">Language *</Label>
+            <Label htmlFor="language">{t("form.language")} *</Label>
             <Input
               id="language"
               value={form.language}
@@ -134,7 +136,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="location">Location *</Label>
+            <Label htmlFor="location">{t("form.location")} *</Label>
             <Input
               id="location"
               value={form.location}
@@ -145,24 +147,24 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="workModel">Work Model *</Label>
+            <Label htmlFor="workModel">{t("form.workModel")} *</Label>
             <Select id="workModel" value={form.workModel} onChange={set("workModel")} required>
-              <option value="ON_SITE">On Site</option>
-              <option value="WFH">Work From Home</option>
-              <option value="HYBRID">Hybrid</option>
+              <option value="ON_SITE">{t("workModel.ON_SITE")}</option>
+              <option value="WFH">{t("workModel.WFH")}</option>
+              <option value="HYBRID">{t("workModel.HYBRID")}</option>
             </Select>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="graduationRequirement">Graduation Requirement</Label>
+            <Label htmlFor="graduationRequirement">{t("form.graduationRequirement")}</Label>
             <Select
               id="graduationRequirement"
               value={form.graduationRequirement}
               onChange={set("graduationRequirement")}
             >
-              <option value="ANY">Any</option>
-              <option value="GRADUATE">Graduate</option>
-              <option value="UNDERGRADUATE">Undergraduate</option>
+              <option value="ANY">{t("form.any")}</option>
+              <option value="GRADUATE">{t("form.graduate")}</option>
+              <option value="UNDERGRADUATE">{t("form.undergraduate")}</option>
             </Select>
           </div>
         </CardContent>
@@ -171,11 +173,11 @@ export function OfferForm({ offer }: OfferFormProps) {
       {/* Schedule & Salary */}
       <Card>
         <CardHeader>
-          <CardTitle>Schedule &amp; Compensation</CardTitle>
+          <CardTitle>{t("form.scheduleCompensation")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="workingHours">Working Hours *</Label>
+            <Label htmlFor="workingHours">{t("form.workingHours")} *</Label>
             <Input
               id="workingHours"
               value={form.workingHours}
@@ -186,7 +188,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="shift">Shift *</Label>
+            <Label htmlFor="shift">{t("form.shift")} *</Label>
             <Input
               id="shift"
               value={form.shift}
@@ -197,7 +199,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="daysOff">Days Off *</Label>
+            <Label htmlFor="daysOff">{t("form.daysOff")} *</Label>
             <Input
               id="daysOff"
               value={form.daysOff}
@@ -208,14 +210,14 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5 sm:col-span-2">
-            <Label>Salary Range *</Label>
+            <Label>{t("form.salaryRange")} *</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="number"
                 min="0"
                 value={form.salaryMin}
                 onChange={set("salaryMin")}
-                placeholder="Min"
+                placeholder={t("form.minSalary")}
                 required
                 className="flex-1"
                 aria-label="Salary minimum"
@@ -226,7 +228,7 @@ export function OfferForm({ offer }: OfferFormProps) {
                 min="0"
                 value={form.salaryMax}
                 onChange={set("salaryMax")}
-                placeholder="Max"
+                placeholder={t("form.maxSalary")}
                 required
                 className="flex-1"
                 aria-label="Salary maximum"
@@ -246,11 +248,11 @@ export function OfferForm({ offer }: OfferFormProps) {
       {/* Commission */}
       <Card>
         <CardHeader>
-          <CardTitle>Commission</CardTitle>
+          <CardTitle>{t("form.commission")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="commissionAmount">Commission Amount</Label>
+            <Label htmlFor="commissionAmount">{t("form.commissionAmount")}</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="commissionAmount"
@@ -275,7 +277,7 @@ export function OfferForm({ offer }: OfferFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="commissionPeriodDays">Commission Period (days)</Label>
+            <Label htmlFor="commissionPeriodDays">{t("form.commissionPeriod")}</Label>
             <Input
               id="commissionPeriodDays"
               type="number"
@@ -291,46 +293,46 @@ export function OfferForm({ offer }: OfferFormProps) {
       {/* Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
+          <CardTitle>{t("form.details")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="benefits">Benefits *</Label>
+            <Label htmlFor="benefits">{t("form.benefits")} *</Label>
             <Textarea
               id="benefits"
               value={form.benefits}
               onChange={set("benefits")}
-              placeholder="List the benefits offered…"
+              placeholder={t("form.benefits")}
               rows={3}
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="interviewProcess">Interview Process *</Label>
+            <Label htmlFor="interviewProcess">{t("form.interviewProcess")} *</Label>
             <Textarea
               id="interviewProcess"
               value={form.interviewProcess}
               onChange={set("interviewProcess")}
-              placeholder="Describe the interview steps…"
+              placeholder={t("form.interviewProcess")}
               rows={3}
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="requirements">Requirements</Label>
+            <Label htmlFor="requirements">{t("form.requirements")}</Label>
             <Textarea
               id="requirements"
               value={form.requirements}
               onChange={set("requirements")}
-              placeholder="Additional requirements (optional)…"
+              placeholder={t("form.requirements")}
               rows={3}
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="formLink">Application Form Link</Label>
+            <Label htmlFor="formLink">{t("form.applicationForm")}</Label>
             <Input
               id="formLink"
               type="url"
@@ -349,10 +351,10 @@ export function OfferForm({ offer }: OfferFormProps) {
           onClick={() => router.back()}
           disabled={loading}
         >
-          Cancel
+          {t("cancel")}
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? (isEdit ? "Saving…" : "Creating…") : isEdit ? "Save Changes" : "Create Offer"}
+          {loading ? (isEdit ? t("form.saving") : t("form.creating")) : isEdit ? t("form.saveChanges") : t("form.titleCreate")}
         </Button>
       </div>
     </form>

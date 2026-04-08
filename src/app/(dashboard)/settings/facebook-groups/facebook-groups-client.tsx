@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Users,
   Plus,
@@ -81,6 +82,9 @@ function parseCsv(text: string): { name: string; url?: string }[] {
 }
 
 export function FacebookGroupsClient({ initialGroups }: Props) {
+  const t = useTranslations("facebookGroups");
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -134,14 +138,14 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
       const res = await fetch("/api/facebook-groups/import", { method: "POST" });
       const data = await res.json() as { created?: number; error?: string };
       if (res.ok) {
-        setImportMsg(`Imported ${data.created} groups successfully.`);
+        setImportMsg(t("importSuccess", { count: data.created ?? 0 }));
         setImportMsgType("success");
         router.refresh();
         const refreshRes = await fetch("/api/facebook-groups?includeDeprecated=true");
         const refreshData = await refreshRes.json() as { groups?: FacebookGroup[] };
         if (refreshData.groups) setGroups(refreshData.groups);
       } else {
-        setImportMsg(data.error ?? "Import failed.");
+        setImportMsg(tErrors("importFailed", { error: data.error ?? "" }));
         setImportMsgType("error");
       }
     });
@@ -360,10 +364,10 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" />
-            Facebook Groups
+            {t("title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {activeGroups.length} active · {withUrl} with URL · {deprecatedGroups.length} deprecated
+            {activeGroups.length} {t("active")} · {withUrl} {t("withUrl")} · {deprecatedGroups.length} {t("deprecated")}
           </p>
         </div>
 
@@ -371,7 +375,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
           {groups.length === 0 && (
             <Button onClick={handleImport} disabled={importPending} variant="outline">
               <DownloadCloud className="h-4 w-4" />
-              {importPending ? "Importing…" : "Import from docs"}
+              {importPending ? t("importing") : t("importFromDocs")}
             </Button>
           )}
           {/* CSV import */}
@@ -387,7 +391,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
             onClick={() => fileInputRef.current?.click()}
           >
             <FileSpreadsheet className="h-4 w-4" />
-            Import from Excel/CSV
+            {t("importFromExcel")}
           </Button>
           {activeGroups.filter((g) => !g.url).length > 0 && (
             <Button
@@ -396,7 +400,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
               disabled={findUrlsRunning}
             >
               <Wand2 className="h-4 w-4" />
-              Find Missing URLs ({activeGroups.filter((g) => !g.url).length})
+              {t("findMissingUrls")} ({activeGroups.filter((g) => !g.url).length})
             </Button>
           )}
         </div>
@@ -446,25 +450,25 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Card>
             <CardContent className="pt-4 pb-3">
-              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="text-xs text-muted-foreground">{t("totalGroups")}</p>
               <p className="text-2xl font-bold">{activeGroups.length}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4 pb-3">
-              <p className="text-xs text-muted-foreground">With URL</p>
+              <p className="text-xs text-muted-foreground">{t("withUrl")}</p>
               <p className="text-2xl font-bold text-emerald-600">{withUrl}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4 pb-3">
-              <p className="text-xs text-muted-foreground">Needs URL</p>
+              <p className="text-xs text-muted-foreground">{t("needsUrl")}</p>
               <p className="text-2xl font-bold text-amber-600">{activeGroups.length - withUrl}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4 pb-3">
-              <p className="text-xs text-muted-foreground">Deprecated</p>
+              <p className="text-xs text-muted-foreground">{t("deprecated")}</p>
               <p className="text-2xl font-bold text-red-500">{deprecatedGroups.length}</p>
             </CardContent>
           </Card>
@@ -478,7 +482,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Wand2 className="h-4 w-4 text-primary" />
-                Find Missing URLs
+                {t("findMissingUrls")}
               </CardTitle>
               {!findUrlsRunning && (
                 <button
@@ -496,7 +500,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Searching Google for group URLs… {findUrlsProgress}/{findUrlsTotal}
+                  {t("searchingGoogle")}… {findUrlsProgress}/{findUrlsTotal}
                 </div>
                 <div className="h-2 rounded-full bg-muted overflow-hidden">
                   <div
@@ -512,8 +516,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
               <div className="space-y-3">
                 {!findUrlsRunning && (
                   <p className="text-sm text-muted-foreground">
-                    Found URLs for {findUrlsResults.filter((r) => r.foundUrl).length} of {findUrlsResults.length} groups.
-                    Uncheck any you don&apos;t want to apply.
+                    {t("foundUrlsFor")} {findUrlsResults.filter((r) => r.foundUrl).length} {t("of")} {findUrlsResults.length} groups.
                   </p>
                 )}
                 <div className="space-y-1 max-h-72 overflow-y-auto border rounded-lg divide-y">
@@ -591,26 +594,26 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
       {/* Add group form */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Add Group Manually</CardTitle>
+          <CardTitle className="text-base">{t("addGroupManually")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-2">
             <Input
-              placeholder="Group name"
+              placeholder={t("groupNamePlaceholder")}
               value={addName}
               onChange={(e) => setAddName(e.target.value)}
               className="flex-1"
               required
             />
             <Input
-              placeholder="Facebook URL (optional)"
+              placeholder={t("facebookUrlPlaceholder")}
               value={addUrl}
               onChange={(e) => setAddUrl(e.target.value)}
               className="flex-1"
             />
             <Button type="submit" disabled={addLoading} className="shrink-0">
               <Plus className="h-4 w-4" />
-              Add
+              {t("add")}
             </Button>
           </form>
         </CardContent>
@@ -622,7 +625,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search groups…"
+              placeholder={t("searchGroups")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -636,9 +639,9 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
               className="shrink-0"
             >
               {showDeprecated ? (
-                <><EyeOff className="h-4 w-4" /> Hide deprecated</>
+                <><EyeOff className="h-4 w-4" /> {t("hideDeprecated")}</>
               ) : (
-                <><Eye className="h-4 w-4" /> Show deprecated ({deprecatedGroups.length})</>
+                <><Eye className="h-4 w-4" /> {t("showDeprecated")} ({deprecatedGroups.length})</>
               )}
             </Button>
           )}
@@ -796,7 +799,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
                           <button
                             onClick={() => handleRestore(group)}
                             className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-emerald-600 transition-colors"
-                            title="Restore group"
+                            title={t("tooltipRestore")}
                           >
                             <RotateCcw className="h-3.5 w-3.5" />
                           </button>
@@ -807,7 +810,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
                               setDeprecateReason("");
                             }}
                             className="p-1.5 rounded hover:bg-amber-50 text-muted-foreground hover:text-amber-600 transition-colors"
-                            title="Mark as deprecated"
+                            title={t("tooltipDeprecate")}
                           >
                             <Ban className="h-3.5 w-3.5" />
                           </button>

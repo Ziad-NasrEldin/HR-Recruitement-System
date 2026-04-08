@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 
 interface Props {
@@ -7,28 +10,30 @@ interface Props {
 }
 
 export function UserStatusBadge({ isActive, trialEndsAt, accountExpiresAt }: Props) {
+  const t = useTranslations("settings");
+
   if (!isActive) {
-    return <Badge variant="destructive">Inactive</Badge>;
+    return <Badge variant="destructive">{t("status.inactive")}</Badge>;
   }
 
   const now = new Date();
 
   if (accountExpiresAt && new Date(accountExpiresAt) < now) {
-    return <Badge variant="destructive">Expired</Badge>;
+    return <Badge variant="destructive">{t("status.expired")}</Badge>;
   }
 
   if (trialEndsAt) {
     const trialEnd = new Date(trialEndsAt);
     if (trialEnd < now) {
-      return <Badge variant="destructive">Trial Ended</Badge>;
+      return <Badge variant="destructive">{t("status.trialEnded")}</Badge>;
     }
     const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
     return (
       <Badge variant="secondary">
-        Trial · {daysLeft}d left
+        {t("status.trialDaysLeft", { days: daysLeft })}
       </Badge>
     );
   }
 
-  return <Badge variant="default">Active</Badge>;
+  return <Badge variant="default">{t("status.active")}</Badge>;
 }

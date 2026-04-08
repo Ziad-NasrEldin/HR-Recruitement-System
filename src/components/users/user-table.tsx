@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { UserStatusBadge } from "./user-status-badge";
 import { cn } from "@/lib/utils";
 import { Pencil, ToggleLeft, ToggleRight, Users } from "lucide-react";
-import { ROLE_LABELS } from "@/types";
 import type { Role } from "@/types";
 
 interface UserRow {
@@ -37,6 +37,8 @@ function formatDate(date: Date | null): string {
 }
 
 export function UserTable({ users: initial, currentUserId }: Props) {
+  const t = useTranslations("settings");
+  const tCommon = useTranslations("common");
   const [users, setUsers] = useState<UserRow[]>(initial);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const router = useRouter();
@@ -61,9 +63,9 @@ export function UserTable({ users: initial, currentUserId }: Props) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
         <Users className="h-8 w-8 text-muted-foreground mb-3" />
-        <p className="text-muted-foreground">No users yet.</p>
+        <p className="text-muted-foreground">{t("empty")}</p>
         <Link href="/settings/users/new" className={cn(buttonVariants({ variant: "outline" }), "mt-4")}>
-          Create first user
+          {t("createFirst")}
         </Link>
       </div>
     );
@@ -75,14 +77,14 @@ export function UserTable({ users: initial, currentUserId }: Props) {
         <table className="w-full text-sm">
           <thead className="border-b bg-muted/40">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Role</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Trial Ends</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Expires</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Leads</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Joined</th>
-              <th className="px-4 py-3 text-right font-medium text-muted-foreground">Actions</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.name")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.role")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.trialEnds")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.expires")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.leads")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.joined")}</th>
+              <th className="px-4 py-3 text-right font-medium text-muted-foreground">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -93,7 +95,7 @@ export function UserTable({ users: initial, currentUserId }: Props) {
                   <p className="text-xs text-muted-foreground">{u.email}</p>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {ROLE_LABELS[u.role]}
+                  {t(`role.${u.role}`)}
                 </td>
                 <td className="px-4 py-3">
                   <UserStatusBadge
@@ -119,7 +121,7 @@ export function UserTable({ users: initial, currentUserId }: Props) {
                     <Link
                       href={`/settings/users/${u.id}/edit`}
                       className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}
-                      title="Edit user"
+                      title={tCommon("edit")}
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Link>
@@ -131,7 +133,7 @@ export function UserTable({ users: initial, currentUserId }: Props) {
                         className="h-8 w-8"
                         onClick={() => toggleActive(u.id)}
                         disabled={togglingId === u.id}
-                        title={u.isActive ? "Deactivate" : "Activate"}
+                        title={u.isActive ? t("deactivate") : t("activate")}
                       >
                         {u.isActive ? (
                           <ToggleRight className="h-4 w-4 text-primary" />

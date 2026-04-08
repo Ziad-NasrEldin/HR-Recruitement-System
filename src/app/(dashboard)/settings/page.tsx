@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { requireSuperAdmin } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { UserTable } from "@/components/users/user-table";
@@ -9,6 +10,7 @@ import { UserTable } from "@/components/users/user-table";
 export const metadata = { title: "Settings | HR Recruitment System" };
 
 export default async function SettingsPage() {
+  const t = await getTranslations("settings");
   const session = await requireSuperAdmin();
 
   const users = await prisma.user.findMany({
@@ -31,14 +33,14 @@ export default async function SettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("pageTitle")}</h1>
           <p className="text-sm text-muted-foreground">
-            {users.length} user{users.length !== 1 ? "s" : ""} registered
+            {t("found", { count: users.length })}
           </p>
         </div>
         <Link href="/settings/users/new" className={cn(buttonVariants())}>
           <Plus className="h-4 w-4" />
-          New User
+          {t("newUser")}
         </Link>
       </div>
 

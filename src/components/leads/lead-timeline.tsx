@@ -1,19 +1,20 @@
+import { getTranslations } from "next-intl/server";
 import { Mic, Bell, BellOff, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { VoiceNote, FollowUpReminder } from "@/generated/prisma/client";
 
-const REMINDER_TYPE_LABELS: Record<string, string> = {
-  PRE_INTERVIEW: "Pre-Interview Check-in",
-  POST_INTERVIEW: "Post-Interview Follow-up",
-  DAY_10: "Day 10 Follow-up",
-  DAY_15: "Day 15 Follow-up",
-  DAY_30: "Day 30 Follow-up",
+const REMINDER_TYPE_KEYS: Record<string, string> = {
+  PRE_INTERVIEW: "preInterview",
+  POST_INTERVIEW: "postInterview",
+  DAY_10: "day10",
+  DAY_15: "day15",
+  DAY_30: "day30",
 };
 
-const VALIDATION_LABELS: Record<string, string> = {
-  PENDING: "Pending review",
-  APPROVED: "Approved",
-  REJECTED: "Rejected",
+const VALIDATION_KEYS: Record<string, string> = {
+  PENDING: "pendingReview",
+  APPROVED: "approved",
+  REJECTED: "rejected",
 };
 
 interface TimelineItem {
@@ -41,7 +42,8 @@ function formatDuration(seconds: number) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
+export async function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
+  const t = await getTranslations("leads.timeline");
   const items: TimelineItem[] = [
     ...voiceNotes.map((vn) => ({
       id: vn.id,
@@ -59,7 +61,7 @@ export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
 
   if (items.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">No activity yet.</p>
+      <p className="text-sm text-muted-foreground">{t("noActivity")}</p>
     );
   }
 
@@ -79,21 +81,21 @@ export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
                 {!isLast && <div className="w-0.5 flex-1 bg-border mt-1" />}
               </div>
               <div className={cn("pb-4 min-w-0 flex-1", isLast && "pb-0")}>
-                <p className="text-sm font-medium">Voice note recorded</p>
+                <p className="text-sm font-medium">{t("voiceNoteRecorded")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{formatDate(item.date)}</p>
                 <div className="mt-1.5 rounded-md border bg-muted/40 p-2 text-xs space-y-1">
-                  <p className="text-muted-foreground">Language: <span className="text-foreground">{vn.language}</span></p>
+                  <p className="text-muted-foreground">{t("language")}: <span className="text-foreground">{vn.language}</span></p>
                   {vn.duration && (
-                    <p className="text-muted-foreground">Duration: <span className="text-foreground">{formatDuration(vn.duration)}</span></p>
+                    <p className="text-muted-foreground">{t("duration")}: <span className="text-foreground">{formatDuration(vn.duration)}</span></p>
                   )}
                   <p className="text-muted-foreground">
-                    Status:{" "}
+                    {t("status")}:{" "}
                     <span className={cn(
                       "font-medium",
                       vn.validationStatus === "APPROVED" && "text-emerald-600",
                       vn.validationStatus === "REJECTED" && "text-destructive",
                     )}>
-                      {VALIDATION_LABELS[vn.validationStatus]}
+                      {t(VALIDATION_KEYS[vn.validationStatus] ?? "pendingReview")}
                     </span>
                   </p>
                   <a
@@ -102,7 +104,7 @@ export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
                   >
-                    Open file ↗
+                    {t("openFile")}
                   </a>
                 </div>
               </div>
@@ -110,7 +112,6 @@ export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
           );
         }
 
-        // Reminder
         const reminder = item.data as FollowUpReminder;
         const isOverdue = !reminder.isCompleted && new Date(reminder.dueDate) < new Date();
         return (
@@ -136,15 +137,15 @@ export function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
             </div>
             <div className={cn("pb-4 min-w-0 flex-1", isLast && "pb-0")}>
               <p className="text-sm font-medium">
-                {REMINDER_TYPE_LABELS[reminder.type] ?? reminder.type}
+                {REMINDER_TYPE_KEYS[reminder.type] ? t(REMINDER_TYPE_KEYS[reminder.type]) : reminder.type}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Due: {formatDate(item.date)}
+                {t("due")}: {formatDate(item.date)}
                 {reminder.isCompleted && reminder.completedAt && (
-                  <> · Completed {formatDate(new Date(reminder.completedAt))}</>
+                  <> · {t("completed")} {formatDate(new Date(reminder.completedAt))}</>
                 )}
                 {isOverdue && !reminder.isCompleted && (
-                  <span className="text-destructive"> · Overdue</span>
+                  <span className="text-destructive"> · {t("overdue")}</span>
                 )}
               </p>
             </div>

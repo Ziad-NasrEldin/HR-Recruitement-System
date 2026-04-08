@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ interface VoiceNoteUploaderProps {
 }
 
 export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
+  const t = useTranslations("leads.voiceNote");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [fileUrl, setFileUrl] = useState("");
@@ -31,7 +33,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fileUrl || !language) {
-      setError("URL and language are required.");
+      setError(t("requiredField"));
       return;
     }
     setLoading(true);
@@ -48,13 +50,13 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Failed to add voice note.");
+        setError(data.error ?? t("saveFailed"));
         return;
       }
       reset();
       router.refresh();
     } catch {
-      setError("Network error. Try again.");
+      setError(t("networkError"));
     } finally {
       setLoading(false);
     }
@@ -64,7 +66,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
     return (
       <Button variant="outline" size="sm" onClick={() => setOpen(true)} className="gap-1">
         <Plus className="h-3.5 w-3.5" />
-        Add Voice Note
+        {t("addVoiceNote")}
       </Button>
     );
   }
@@ -72,7 +74,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border bg-muted/30 p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">Add Voice Note</p>
+        <p className="text-sm font-medium">{t("addVoiceNote")}</p>
         <button type="button" onClick={reset} className="text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
         </button>
@@ -94,7 +96,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label htmlFor="vn-lang">Language *</Label>
+          <Label htmlFor="vn-lang">{t("language")} *</Label>
           <Input
             id="vn-lang"
             placeholder="e.g. English"
@@ -104,7 +106,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="vn-duration">Duration (seconds)</Label>
+          <Label htmlFor="vn-duration">{t("duration")} (seconds)</Label>
           <Input
             id="vn-duration"
             type="number"
@@ -118,10 +120,10 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
 
       <div className="flex gap-2">
         <Button type="submit" size="sm" disabled={loading}>
-          {loading ? "Saving…" : "Save"}
+          {loading ? t("saving") : t("save")}
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={reset} disabled={loading}>
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </form>

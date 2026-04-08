@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,8 @@ interface LeadFormProps {
 
 export function LeadForm({ lead, offers }: LeadFormProps) {
   const router = useRouter();
+  const t = useTranslations("leads");
+  const tErrors = useTranslations("errors");
   const isEdit = !!lead;
 
   const [form, setForm] = useState({
@@ -60,7 +63,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Something went wrong.");
+        setError(data.error ?? tErrors("somethingWentWrong"));
         return;
       }
 
@@ -68,7 +71,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       router.push(`/leads/${data.lead.id}`);
       router.refresh();
     } catch {
-      setError("Network error. Please try again.");
+      setError(tErrors("networkError"));
     } finally {
       setLoading(false);
     }
@@ -85,11 +88,11 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       {/* Personal Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
+          <CardTitle>{t("form.personalInfo")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="name">Full Name *</Label>
+            <Label htmlFor="name">{t("form.fullName")} *</Label>
             <Input
               id="name"
               value={form.name}
@@ -100,7 +103,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="phone">Phone *</Label>
+            <Label htmlFor="phone">{t("form.phone")} *</Label>
             <Input
               id="phone"
               value={form.phone}
@@ -111,7 +114,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("form.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -122,7 +125,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+            <Label htmlFor="whatsappNumber">{t("form.whatsapp")}</Label>
             <Input
               id="whatsappNumber"
               value={form.whatsappNumber}
@@ -132,7 +135,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="location">Location *</Label>
+            <Label htmlFor="location">{t("form.location")} *</Label>
             <Input
               id="location"
               value={form.location}
@@ -147,11 +150,11 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       {/* Qualifications */}
       <Card>
         <CardHeader>
-          <CardTitle>Qualifications</CardTitle>
+          <CardTitle>{t("form.qualifications")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="language">Language *</Label>
+            <Label htmlFor="language">{t("form.language")} *</Label>
             <Input
               id="language"
               value={form.language}
@@ -162,7 +165,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="languageLevel">Language Level</Label>
+            <Label htmlFor="languageLevel">{t("form.languageLevel")}</Label>
             <Input
               id="languageLevel"
               value={form.languageLevel}
@@ -172,7 +175,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="graduationStatus">Graduation Status *</Label>
+            <Label htmlFor="graduationStatus">{t("form.graduationStatus")} *</Label>
             <Input
               id="graduationStatus"
               value={form.graduationStatus}
@@ -183,7 +186,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="militaryStatus">Military Status</Label>
+            <Label htmlFor="militaryStatus">{t("form.militaryStatus")}</Label>
             <Input
               id="militaryStatus"
               value={form.militaryStatus}
@@ -193,7 +196,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
           </div>
 
           <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="previousApplications">Previous Applications</Label>
+            <Label htmlFor="previousApplications">{t("form.previousApps")}</Label>
             <Input
               id="previousApplications"
               value={form.previousApplications}
@@ -207,17 +210,17 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       {/* Job Offer */}
       <Card>
         <CardHeader>
-          <CardTitle>Linked Offer</CardTitle>
+          <CardTitle>{t("form.linkedOffer")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-1.5">
-            <Label htmlFor="offerId">Job Offer</Label>
+            <Label htmlFor="offerId">{t("form.jobOffer")}</Label>
             <Select
               id="offerId"
               value={form.offerId}
               onChange={set("offerId")}
             >
-              <option value="">None</option>
+              <option value="">{t("common.none")}</option>
               {offers.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.company} — {o.accountType} ({o.language})
@@ -231,14 +234,14 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       {/* Notes */}
       <Card>
         <CardHeader>
-          <CardTitle>Notes</CardTitle>
+          <CardTitle>{t("form.notes")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
             id="notes"
             value={form.notes}
             onChange={set("notes")}
-            placeholder="Any additional notes about this candidate…"
+            placeholder={t("form.notesPlaceholder")}
             rows={4}
           />
         </CardContent>
@@ -246,12 +249,12 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
 
       <div className="flex justify-end gap-3">
         <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={loading}>
           {loading
-            ? isEdit ? "Saving…" : "Creating…"
-            : isEdit ? "Save Changes" : "Add Lead"
+            ? isEdit ? t("form.saving") : t("form.creating")
+            : isEdit ? t("form.saveChanges") : t("addLead")
           }
         </Button>
       </div>

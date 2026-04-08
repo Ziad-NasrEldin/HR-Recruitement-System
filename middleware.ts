@@ -1,10 +1,10 @@
-import NextAuth from "next-auth";
-import { authConfig } from "@/lib/auth.config";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/routing";
 
-export const { auth: middleware } = NextAuth(authConfig);
+export default createMiddleware(routing);
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\..*).*)",
   ],
 };

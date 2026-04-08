@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Briefcase, DollarSign, Activity } from "lucide-react";
 
@@ -8,19 +9,22 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const session = await auth();
+  const t = await getTranslations("dashboard");
+
+  const userName = session?.user?.name ?? session?.user?.email ?? "";
 
   return (
     <div className="space-y-12 py-4">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tighter">Dashboard</h1>
+          <h1 className="text-4xl font-bold tracking-tighter">{t("title")}</h1>
           <p className="text-muted-foreground text-lg">
-            Welcome back, {session?.user?.name ?? session?.user?.email}
+            {t("welcome", { name: userName })}
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-accent-premium/10 text-accent-premium text-xs font-medium border border-accent-premium/20">
           <Activity className="h-3 w-3" />
-          System Operational
+          {t("systemOperational")}
         </div>
       </div>
 
@@ -32,17 +36,17 @@ export default async function DashboardPage() {
               <CardHeader className="p-0 mb-4">
                 <CardTitle className="text-lg font-medium flex items-center gap-2">
                   <Users className="h-5 w-5 text-accent-premium" />
-                  Total Leads
+                  {t("totalLeads")}
                 </CardTitle>
               </CardHeader>
               <div className="text-6xl font-bold tracking-tighter mt-4">1,284</div>
               <p className="text-muted-foreground mt-2 text-balance">
-                Total candidates currently in the pipeline across all active offers.
+                {t("totalCandidates")}
               </p>
             </div>
             <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pipeline Health</span>
-              <span className="text-sm font-bold text-accent-premium">+12.5% this month</span>
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("pipelineHealth")}</span>
+              <span className="text-sm font-bold text-accent-premium">+12.5% {t("thisMonth")}</span>
             </div>
           </div>
         </div>
@@ -53,15 +57,15 @@ export default async function DashboardPage() {
             <CardHeader className="p-0 flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <Briefcase className="h-4 w-4 text-accent-premium" />
-                Active Offers
+                {t("activeOffers")}
               </CardTitle>
               <div className="text-xs font-bold bg-accent-premium/10 text-accent-premium px-2 py-0.5 rounded-full">
-                Live
+                {t("live")}
               </div>
             </CardHeader>
             <CardContent className="p-0">
               <div className="text-3xl font-bold tracking-tighter">42</div>
-              <p className="text-xs text-muted-foreground mt-1">Active recruitment campaigns</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("activeRecruitmentCampaigns")}</p>
             </CardContent>
           </div>
         </div>
@@ -72,12 +76,12 @@ export default async function DashboardPage() {
             <CardHeader className="p-0 flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-accent-premium" />
-                Pending Commissions
+                {t("pendingCommissions")}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="text-3xl font-bold tracking-tighter">$12,450</div>
-              <p className="text-xs text-muted-foreground mt-1">Awaiting verification</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("awaitingVerification")}</p>
             </CardContent>
           </div>
         </div>
@@ -89,10 +93,10 @@ export default async function DashboardPage() {
               <CardHeader className="p-0">
                 <CardTitle className="text-xl font-bold tracking-tight flex items-center gap-2">
                   <Activity className="h-5 w-5 text-accent-premium" />
-                  Recent Activity
+                  {t("recentActivity")}
                 </CardTitle>
               </CardHeader>
-              <button className="text-xs font-medium text-accent-premium hover:underline">View all</button>
+              <button className="text-xs font-medium text-accent-premium hover:underline">{t("viewAll")}</button>
             </div>
             <div className="grid gap-4">
               {[1, 2, 3].map((i) => (
@@ -106,7 +110,7 @@ export default async function DashboardPage() {
                       <p className="text-xs text-muted-foreground">2 hours ago</p>
                     </div>
                   </div>
-                  <div className="text-xs font-medium text-muted-foreground">Processed</div>
+                  <div className="text-xs font-medium text-muted-foreground">{t("processed")}</div>
                 </div>
               ))}
             </div>

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Bell, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import {
@@ -46,6 +48,8 @@ function formatDueDate(dateStr: string): string {
 }
 
 export function ReminderBell() {
+  const t = useTranslations("facebookGroups");
+  const tReminders = useTranslations("reminders");
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [overdue, setOverdue] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,7 +170,7 @@ export function ReminderBell() {
                     <button
                       onClick={(e) => markComplete(reminder.id, e)}
                       className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
-                      title="Mark as done"
+                      title={tReminders("markDone")}
                     >
                       <CheckCircle2 className="h-4 w-4" />
                     </button>

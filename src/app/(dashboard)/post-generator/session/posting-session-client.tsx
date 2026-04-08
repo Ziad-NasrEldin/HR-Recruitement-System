@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   ChevronRight,
   Copy,
@@ -42,6 +43,9 @@ const INTERVAL_OPTIONS = [
 ];
 
 export function PostingSessionClient({ groups }: Props) {
+  const t = useTranslations("postGenerator.postingSession");
+  const tPostGen = useTranslations("postGenerator");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const postText = searchParams.get("post") ? decodeURIComponent(searchParams.get("post")!) : "";

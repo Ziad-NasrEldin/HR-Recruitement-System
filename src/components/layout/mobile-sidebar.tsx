@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Menu,
   Briefcase,
@@ -39,6 +40,18 @@ const iconMap: Record<string, LucideIcon> = {
   Radio,
 };
 
+const navKeyMap: Record<string, string> = {
+  dashboard: "dashboard",
+  leads: "leads",
+  offers: "offers",
+  commissions: "commissions",
+  analytics: "analytics",
+  postGenerator: "postGenerator",
+  campaigns: "campaigns",
+  facebookGroups: "facebookGroups",
+  settings: "settings",
+};
+
 interface MobileSidebarProps {
   role: Role;
 }
@@ -46,6 +59,7 @@ interface MobileSidebarProps {
 export function MobileSidebar({ role }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
   const items = getNavItemsForRole(role);
 
   return (
@@ -75,12 +89,13 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
         <nav className="flex flex-col gap-1 p-4">
           {items.map((item) => {
             const Icon = iconMap[item.icon];
+            const navKey = Object.entries(navKeyMap).find(([_, v]) => item.href.includes(v))?.[0] || "";
             const isActive =
               pathname === item.href ||
               (item.href !== "/dashboard" &&
                 item.href !== "/settings" &&
-                pathname.startsWith(item.href)) ||
-              (item.href === "/settings" && pathname === "/settings");
+                (pathname.startsWith(item.href) || pathname.startsWith(`/${item.href.replace("/", "")}`))) ||
+              (item.href === "/settings" && (pathname === "/settings" || pathname === "/en/settings" || pathname === "/ar/settings" || pathname === "/fr/settings" || pathname === "/de/settings"));
 
             return (
               <Link
@@ -95,7 +110,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
                 )}
               >
                 {Icon && <Icon className="h-4 w-4" />}
-                {item.title}
+                {navKey && t(navKey)}
               </Link>
             );
           })}

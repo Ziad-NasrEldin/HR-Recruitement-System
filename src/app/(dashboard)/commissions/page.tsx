@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
@@ -16,8 +17,6 @@ interface CommissionWithRelations extends Commission {
   offer: Pick<Offer, "id" | "company" | "accountType" | "language">;
 }
 
-export const metadata = { title: "Commissions | HR Recruitment System" };
-
 interface PageProps {
   searchParams: Promise<{
     status?: string;
@@ -30,6 +29,7 @@ interface PageProps {
 }
 
 export default async function CommissionsPage({ searchParams }: PageProps) {
+  const t = await getTranslations("commissions");
   const session = await auth();
   const params = await searchParams;
 
@@ -137,9 +137,9 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Commissions</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">
-          {total} commission{total !== 1 ? "s" : ""} found
+          {t("found", { count: total })}
         </p>
       </div>
 
@@ -183,18 +183,18 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
               href={buildPageUrl(page - 1)}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              Previous
+              {t("previous")}
             </Link>
           )}
           <span className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
+            {t("pagination", { current: page, total: totalPages })}
           </span>
           {page < totalPages && (
             <Link
               href={buildPageUrl(page + 1)}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              Next
+              {t("next")}
             </Link>
           )}
         </div>

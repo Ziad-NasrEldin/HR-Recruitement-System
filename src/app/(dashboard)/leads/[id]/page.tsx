@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   ChevronLeft, Pencil, Phone, Mail, MessageCircle, Globe,
   GraduationCap, Shield, MapPin, Briefcase, FileText, DollarSign, Calendar,
@@ -31,6 +32,7 @@ function formatDate(date: Date | null) {
 export default async function LeadDetailPage({ params }: PageProps) {
   const { id } = await params;
   const session = await auth();
+  const t = await getTranslations("leads");
 
   const lead = await prisma.lead.findUnique({
     where: { id },
@@ -54,7 +56,6 @@ export default async function LeadDetailPage({ params }: PageProps) {
 
   if (!lead) notFound();
 
-  // Recruiter can only see their own leads
   if (session?.user?.role === "RECRUITER" && lead.recruiterId !== session.user.id) {
     redirect("/leads");
   }
@@ -62,13 +63,13 @@ export default async function LeadDetailPage({ params }: PageProps) {
   const isSuperAdmin = session?.user?.role === "SUPER_ADMIN";
 
   const profile = [
-    { icon: Phone, label: "Phone", value: lead.phone },
-    { icon: Mail, label: "Email", value: lead.email ?? "—" },
-    { icon: MessageCircle, label: "WhatsApp", value: lead.whatsappNumber ?? "—" },
-    { icon: Globe, label: "Language", value: lead.languageLevel ? `${lead.language} · ${lead.languageLevel}` : lead.language },
-    { icon: GraduationCap, label: "Graduation", value: lead.graduationStatus },
-    { icon: Shield, label: "Military", value: lead.militaryStatus ?? "—" },
-    { icon: MapPin, label: "Location", value: lead.location },
+    { icon: Phone, label: t("form.phone"), value: lead.phone },
+    { icon: Mail, label: t("form.email"), value: lead.email ?? "—" },
+    { icon: MessageCircle, label: t("form.whatsapp"), value: lead.whatsappNumber ?? "—" },
+    { icon: Globe, label: t("form.language"), value: lead.languageLevel ? `${lead.language} · ${lead.languageLevel}` : lead.language },
+    { icon: GraduationCap, label: t("form.graduationStatus"), value: lead.graduationStatus },
+    { icon: Shield, label: t("form.militaryStatus"), value: lead.militaryStatus ?? "—" },
+    { icon: MapPin, label: t("form.location"), value: lead.location },
   ];
 
   return (
@@ -81,7 +82,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to leads
+            {t("backToLeads")}
           </Link>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight">{lead.name}</h1>
@@ -93,7 +94,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
             </p>
           )}
           <p className="text-xs text-muted-foreground mt-1">
-            Recruiter: {lead.recruiter.name}
+            {t("detail.recruiter")}: {lead.recruiter.name}
           </p>
         </div>
         <Link
@@ -101,14 +102,14 @@ export default async function LeadDetailPage({ params }: PageProps) {
           className={cn(buttonVariants({ variant: "outline", size: "sm" }), "shrink-0")}
         >
           <Pencil className="h-3.5 w-3.5 mr-1" />
-          Edit
+          {t("editLead")}
         </Link>
       </div>
 
       {/* Pipeline */}
       <Card>
         <CardHeader>
-          <CardTitle>Pipeline Stage</CardTitle>
+          <CardTitle>{t("detail.pipelineStage")}</CardTitle>
         </CardHeader>
         <CardContent>
           <PipelineStageSelector leadId={lead.id} currentStatus={lead.status} />
@@ -121,7 +122,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {/* Profile */}
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle>{t("detail.profile")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {profile.map(({ icon: Icon, label, value }) => (
@@ -137,7 +138,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <div className="flex gap-2 text-sm">
                   <FileText className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Previous Applications</p>
+                    <p className="text-xs text-muted-foreground">{t("detail.previousApplications")}</p>
                     <p>{lead.previousApplications}</p>
                   </div>
                 </div>
@@ -149,13 +150,13 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {lead.offer && (
             <Card>
               <CardHeader>
-                <CardTitle>Linked Offer</CardTitle>
+                <CardTitle>{t("detail.linkedOffer")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex gap-2">
                   <Briefcase className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Offer</p>
+                    <p className="text-xs text-muted-foreground">{t("detail.linkedOffer")}</p>
                     <Link
                       href={`/offers/${lead.offer.id}`}
                       className="text-primary hover:underline"
@@ -167,7 +168,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <div className="flex gap-2">
                   <DollarSign className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Commission</p>
+                    <p className="text-xs text-muted-foreground">{t("detail.commission")}</p>
                     <p>{lead.offer.commissionAmount.toLocaleString()} EGP / {lead.offer.commissionPeriodDays} days</p>
                   </div>
                 </div>
@@ -178,7 +179,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {/* Key Dates */}
           <Card>
             <CardHeader>
-              <CardTitle>Key Dates</CardTitle>
+              <CardTitle>{t("detail.keyDates")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               {[
@@ -201,18 +202,18 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {lead.commission && (
             <Card>
               <CardHeader>
-                <CardTitle>Commission</CardTitle>
+                <CardTitle>{t("detail.commission")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex gap-2">
                   <DollarSign className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Amount</p>
+                    <p className="text-xs text-muted-foreground">{t("detail.commission")}</p>
                     <p>{lead.commission.amount.toLocaleString()} EGP</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Status</p>
+                  <p className="text-xs text-muted-foreground">{t("leads.status")}</p>
                   <p className="font-medium capitalize">{lead.commission.status.toLowerCase()}</p>
                 </div>
               </CardContent>
@@ -225,12 +226,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {/* Voice Notes */}
           <Card>
             <CardHeader className="flex-row items-center justify-between space-y-0">
-              <CardTitle>Voice Notes</CardTitle>
+              <CardTitle>{t("detail.voiceNotes")}</CardTitle>
               <VoiceNoteUploader leadId={lead.id} />
             </CardHeader>
             <CardContent>
               {lead.voiceNotes.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No voice notes yet.</p>
+                <p className="text-sm text-muted-foreground">{t("detail.noVoiceNotes")}</p>
               ) : (
                 <div className="space-y-3">
                   {lead.voiceNotes.map((vn) => (
@@ -248,7 +249,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {/* Timeline (Reminders) */}
           <Card>
             <CardHeader>
-              <CardTitle>Follow-up Timeline</CardTitle>
+              <CardTitle>{t("detail.followUpTimeline")}</CardTitle>
             </CardHeader>
             <CardContent>
               <LeadTimeline
@@ -262,7 +263,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
           {lead.notes && (
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t("detail.notes")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap">{lead.notes}</p>
