@@ -70,7 +70,7 @@ export function Sidebar({ role }: SidebarProps) {
             (item.href !== "/dashboard" &&
               item.href !== "/settings" &&
               (pathname.startsWith(item.href) || pathname.startsWith(`/${item.href.replace("/", "")}`))) ||
-            (item.href === "/settings" && (pathname === "/settings" || pathname === "/en/settings" || pathname === "/ar/settings" || pathname === "/fr/settings"));
+            (item.href === "/settings" && pathname === "/settings");
 
           return (
             <Link

@@ -95,7 +95,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
               (item.href !== "/dashboard" &&
                 item.href !== "/settings" &&
                 (pathname.startsWith(item.href) || pathname.startsWith(`/${item.href.replace("/", "")}`))) ||
-              (item.href === "/settings" && (pathname === "/settings" || pathname === "/en/settings" || pathname === "/ar/settings" || pathname === "/fr/settings" || pathname === "/de/settings"));
+              (item.href === "/settings" && pathname === "/settings");
 
             return (
               <Link

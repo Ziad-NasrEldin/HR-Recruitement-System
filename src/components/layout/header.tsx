@@ -72,7 +72,7 @@ export async function Header() {
             <form
               action={async () => {
                 "use server";
-                await signOut({ redirectTo: "/en/login" });
+                await signOut({ redirectTo: "/login" });
               }}
             >
               <DropdownMenuItem

@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale } from "next-intl/server";
-import { routing } from "@/routing";
-import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -27,11 +25,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLocale();
-  
-  if (!routing.locales.includes(locale as typeof routing.locales[number])) {
-    redirect("/en");
-  }
-  
   const messages = await getMessages();
   const isRTL = locale === "ar";
 
