@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,9 @@ function toDateInputValue(date: Date | null | undefined): string {
 }
 
 export function UserForm({ user }: Props) {
+  const t = useTranslations("settings");
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const isEditing = Boolean(user);
 
@@ -65,14 +69,14 @@ export function UserForm({ user }: Props) {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? "Something went wrong");
+        setError(data.error ?? tErrors("somethingWentWrong"));
         return;
       }
 
       router.push("/settings");
       router.refresh();
     } catch {
-      setError("Network error — please try again");
+      setError(tErrors("networkError"));
     } finally {
       setSaving(false);
     }
@@ -82,7 +86,7 @@ export function UserForm({ user }: Props) {
     <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
       {/* Name */}
       <div className="space-y-1.5">
-        <Label htmlFor="name">Full Name</Label>
+        <Label htmlFor="name">{t("form.fullName")}</Label>
         <Input
           id="name"
           value={name}
@@ -94,7 +98,7 @@ export function UserForm({ user }: Props) {
 
       {/* Email */}
       <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t("form.email")}</Label>
         <Input
           id="email"
           type="email"
@@ -108,7 +112,7 @@ export function UserForm({ user }: Props) {
       {/* Password */}
       <div className="space-y-1.5">
         <Label htmlFor="password">
-          {isEditing ? "New Password (leave blank to keep current)" : "Password"}
+          {isEditing ? t("form.passwordHint") : t("form.password")}
         </Label>
         <Input
           id="password"
@@ -123,35 +127,35 @@ export function UserForm({ user }: Props) {
 
       {/* Role */}
       <div className="space-y-1.5">
-        <Label htmlFor="role">Role</Label>
+        <Label htmlFor="role">{t("form.role")}</Label>
         <Select
           id="role"
           value={role}
           onChange={(e) => setRole(e.target.value as typeof role)}
         >
-          <option value="RECRUITER">Recruiter</option>
-          <option value="SUPER_ADMIN">Super Admin</option>
+          <option value="RECRUITER">{t("form.roleRecruiter")}</option>
+          <option value="SUPER_ADMIN">{t("form.roleSuperAdmin")}</option>
         </Select>
       </div>
 
       {/* Active toggle (edit only) */}
       {isEditing && (
         <div className="space-y-1.5">
-          <Label htmlFor="isActive">Account Status</Label>
+          <Label htmlFor="isActive">{t("form.accountStatus")}</Label>
           <Select
             id="isActive"
             value={isActive ? "true" : "false"}
             onChange={(e) => setIsActive(e.target.value === "true")}
           >
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+            <option value="true">{t("status.active")}</option>
+            <option value="false">{t("status.inactive")}</option>
           </Select>
         </div>
       )}
 
       {/* Trial ends at */}
       <div className="space-y-1.5">
-        <Label htmlFor="trialEndsAt">Trial Ends At (optional)</Label>
+        <Label htmlFor="trialEndsAt">{t("form.trialEndsAt")}</Label>
         <Input
           id="trialEndsAt"
           type="date"
@@ -162,7 +166,7 @@ export function UserForm({ user }: Props) {
 
       {/* Account expires at */}
       <div className="space-y-1.5">
-        <Label htmlFor="accountExpiresAt">Account Expires At (optional)</Label>
+        <Label htmlFor="accountExpiresAt">{t("form.expiresAt")}</Label>
         <Input
           id="accountExpiresAt"
           type="date"
@@ -179,10 +183,10 @@ export function UserForm({ user }: Props) {
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving…" : isEditing ? "Save Changes" : "Create User"}
+          {saving ? tCommon("save") : isEditing ? tCommon("save") : t("createUser")}
         </Button>
         <Button type="button" variant="ghost" onClick={() => router.push("/settings")}>
-          Cancel
+          {tCommon("cancel")}
         </Button>
       </div>
     </form>

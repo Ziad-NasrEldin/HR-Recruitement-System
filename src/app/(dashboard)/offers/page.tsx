@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -9,13 +10,12 @@ import { OfferFilters } from "@/components/offers/offer-filters";
 import { ImportOffersButton } from "@/components/offers/import-offers-button";
 import type { OfferStatus, WorkModel } from "@/generated/prisma/client";
 
-export const metadata = { title: "Offers | HR Recruitment System" };
-
 interface PageProps {
   searchParams: Promise<{ status?: string; language?: string; workModel?: string; page?: string }>;
 }
 
 export default async function OffersPage({ searchParams }: PageProps) {
+  const t = await getTranslations("offers");
   const session = await auth();
   const params = await searchParams;
 
@@ -50,9 +50,9 @@ export default async function OffersPage({ searchParams }: PageProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Offers</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {total} offer{total !== 1 ? "s" : ""} found
+            {t("found", { count: total })}
           </p>
         </div>
         {isSuperAdmin && (
@@ -60,7 +60,7 @@ export default async function OffersPage({ searchParams }: PageProps) {
             <ImportOffersButton />
             <Link href="/offers/new" className={cn(buttonVariants())}>
               <Plus className="h-4 w-4" />
-              New Offer
+              {t("newOffer")}
             </Link>
           </div>
         )}
@@ -72,10 +72,10 @@ export default async function OffersPage({ searchParams }: PageProps) {
       {/* Grid */}
       {offers.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-          <p className="text-muted-foreground">No offers match your filters.</p>
+          <p className="text-muted-foreground">{t("empty")}</p>
           {isSuperAdmin && (
             <Link href="/offers/new" className={cn(buttonVariants({ variant: "outline" }), "mt-4")}>
-              Create your first offer
+              {t("createFirst")}
             </Link>
           )}
         </div>
@@ -100,11 +100,11 @@ export default async function OffersPage({ searchParams }: PageProps) {
               }).toString()}`}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              Previous
+              {t("previous")}
             </Link>
           )}
           <span className="text-sm text-muted-foreground">
-            Page {page} of {totalPages}
+            {t("pagination", { current: page, total: totalPages })}
           </span>
           {page < totalPages && (
             <Link
@@ -116,7 +116,7 @@ export default async function OffersPage({ searchParams }: PageProps) {
               }).toString()}`}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              Next
+              {t("next")}
             </Link>
           )}
         </div>

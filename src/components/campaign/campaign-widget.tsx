@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Send, SkipForward, X, Play, CheckCircle2, Bell } from "lucide-react";
 import {
   getCampaign,
@@ -21,6 +22,7 @@ function formatTime(secs: number): string {
 }
 
 export function CampaignWidget() {
+  const t = useTranslations("campaigns");
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [done, setDone] = useState(false);
@@ -258,22 +260,22 @@ export function CampaignWidget() {
             className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 text-sm transition-colors"
           >
             {copied ? (
-              <><CheckCircle2 className="h-4 w-4" /> Copied! Paste & Post</>
+              <><CheckCircle2 className="h-4 w-4" /> {t("widget.copiedPaste")}</>
             ) : (
-              <><Send className="h-4 w-4" /> POST NOW</>
+              <><Send className="h-4 w-4" /> {t("widget.postNow")}</>
             )}
           </button>
           <button
             onClick={handleSkip}
             className="p-2.5 rounded-xl border hover:bg-muted transition-colors"
-            title="Skip this group"
+            title={t("widget.skipGroup")}
           >
             <SkipForward className="h-4 w-4 text-muted-foreground" />
           </button>
           <button
             onClick={handleStop}
             className="p-2.5 rounded-xl border hover:bg-destructive/10 transition-colors"
-            title="Stop campaign"
+            title={t("widget.stopCampaign")}
           >
             <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
           </button>
@@ -288,19 +290,19 @@ export function CampaignWidget() {
       {showNotifBanner && (
         <div className="flex items-center gap-2 rounded-xl border bg-card px-3 py-2 shadow-md text-xs">
           <Bell className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-muted-foreground">Enable desktop notifications?</span>
+          <span className="text-muted-foreground">{t("enableNotifications")}</span>
           <button
             onClick={requestNotifications}
             className="px-2 py-0.5 rounded bg-primary text-primary-foreground font-medium"
           >
-            Allow
+            {t("widget.allow")}
           </button>
           <button onClick={dismissNotifBanner} className="text-muted-foreground hover:text-foreground">✕</button>
         </div>
       )}
       <div className="flex items-center gap-2.5 rounded-full border bg-card px-4 py-2 shadow-md text-sm">
         <Play className="h-3.5 w-3.5 text-primary" />
-        <span className="font-medium text-foreground">Campaign</span>
+        <span className="font-medium text-foreground">{t("widget.campaign")}</span>
         <span className="text-muted-foreground">·</span>
         <span className="font-mono font-medium tabular-nums">{formatTime(timeLeft)}</span>
         <span className="text-muted-foreground text-xs">
@@ -309,7 +311,7 @@ export function CampaignWidget() {
         <button
           onClick={handleStop}
           className="ml-1 rounded-full p-0.5 hover:bg-muted transition-colors"
-          title="Stop campaign"
+          title={t("widget.stopCampaign")}
         >
           <X className="h-3.5 w-3.5 text-muted-foreground" />
         </button>

@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { LEAD_STATUS_ORDER, LEAD_STATUS_LABELS } from "@/types";
+import { LEAD_STATUS_ORDER } from "@/types";
 import type { LeadStatus } from "@/generated/prisma/client";
 
 interface PipelineStageSelectorProps {
@@ -15,11 +16,12 @@ interface PipelineStageSelectorProps {
   currentStatus: LeadStatus;
 }
 
-// Statuses that are considered terminal (no further progression)
 const TERMINAL_STATUSES: LeadStatus[] = ["ACCEPTED", "REJECTED", "COMMISSION_PAID"];
 
 export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSelectorProps) {
   const router = useRouter();
+  const t = useTranslations("leads");
+  const tErrors = useTranslations("errors");
   const [selectedStatus, setSelectedStatus] = useState<LeadStatus | "">("");
   const [interviewDate, setInterviewDate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,7 @@ export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSe
   const handleConfirm = async () => {
     if (!selectedStatus) return;
     if (selectedStatus === "INTERVIEW_SCHEDULED" && !interviewDate) {
-      setError("Please pick an interview date/time.");
+      setError(t("selectInterviewDate"));
       return;
     }
 
@@ -48,7 +50,7 @@ export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSe
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Failed to update status.");
+        setError(data.error ?? tErrors("saveFailed"));
         return;
       }
       setOpen(false);
@@ -56,7 +58,7 @@ export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSe
       setInterviewDate("");
       router.refresh();
     } catch {
-      setError("Network error. Try again.");
+      setError(tErrors("networkError"));
     } finally {
       setLoading(false);
     }
@@ -97,7 +99,7 @@ export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSe
                       isCurrent ? "font-semibold text-foreground" : "text-muted-foreground"
                     )}
                   >
-                    {LEAD_STATUS_LABELS[status]}
+                    {t(`status.${status}`)}
                   </span>
                 </div>
                 {/* Connector line */}
@@ -115,75 +117,53 @@ export function PipelineStageSelector({ leadId, currentStatus }: PipelineStageSe
         </div>
       </div>
 
-      {/* Change status section */}
-      {!open ? (
+      {/* Change status dropdown */}
+      {!open && (
         <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-          Change Status
+          {t("changeStatus")}
         </Button>
-      ) : (
-        <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
-          <p className="text-sm font-medium">Change pipeline stage</p>
+      )}
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
-
+      {open && (
+        <div className="flex flex-wrap items-end gap-3 p-4 rounded-lg border bg-muted/30">
           <div className="space-y-1.5">
-            <Label htmlFor="new-status">New Status</Label>
+            <Label htmlFor="newStatus">{t("newStatus")}</Label>
             <Select
-              id="new-status"
+              id="newStatus"
               value={selectedStatus}
-              onChange={(e) => {
-                setSelectedStatus(e.target.value as LeadStatus);
-                setError(null);
-              }}
+              onChange={(e) => setSelectedStatus(e.target.value as LeadStatus)}
             >
-              <option value="">— select —</option>
+              <option value="">{t("selectStatus")}</option>
               {LEAD_STATUS_ORDER.map((status) => (
-                <option key={status} value={status} disabled={status === currentStatus}>
-                  {LEAD_STATUS_LABELS[status]}
-                  {status === currentStatus ? " (current)" : ""}
-                </option>
+                <option key={status} value={status}>{t(`status.${status}`)}</option>
               ))}
             </Select>
           </div>
 
           {selectedStatus === "INTERVIEW_SCHEDULED" && (
             <div className="space-y-1.5">
-              <Label htmlFor="interview-date">Interview Date & Time *</Label>
+              <Label htmlFor="interviewDate">{t("interviewDate")}</Label>
               <Input
-                id="interview-date"
+                id="interviewDate"
                 type="datetime-local"
                 value={interviewDate}
                 onChange={(e) => setInterviewDate(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
-                required
               />
             </div>
           )}
 
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              onClick={handleConfirm}
-              disabled={!selectedStatus || loading}
-            >
-              {loading ? "Updating…" : "Confirm"}
+            <Button size="sm" onClick={handleConfirm} disabled={loading || !selectedStatus}>
+              {loading ? t("saving") : t("confirm")}
             </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setOpen(false);
-                setSelectedStatus("");
-                setInterviewDate("");
-                setError(null);
-              }}
-              disabled={loading}
-            >
-              Cancel
+            <Button variant="ghost" size="sm" onClick={() => { setOpen(false); setSelectedStatus(""); setError(null); }}>
+              {t("cancel")}
             </Button>
           </div>
+
+          {error && (
+            <p className="w-full text-sm text-destructive">{error}</p>
+          )}
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Sparkles, Copy, CheckCheck, Loader2, RefreshCw,
   AlertCircle, Send, History, ChevronDown, ChevronUp, Clock, Bookmark,
@@ -31,14 +32,6 @@ interface PostSession {
   createdAt: string;
 }
 
-const POST_LABELS = [
-  "Mysterious & Curiosity-Driven",
-  "Benefit-Focused & Aspirational",
-  "Urgency-Driven",
-  "Community / Social Proof",
-  "Direct & Punchy",
-];
-
 const STORAGE_KEY = "post_generator_history";
 const MAX_HISTORY = 20;
 
@@ -58,6 +51,8 @@ function saveToHistory(session: PostSession) {
 }
 
 export function PostGeneratorClient({ offers }: Props) {
+  const t = useTranslations("postGenerator");
+  const tErrors = useTranslations("errors");
   const router = useRouter();
   const [selectedOfferId, setSelectedOfferId] = useState("");
   const [posts, setPosts] = useState<string[]>([]);
@@ -69,6 +64,14 @@ export function PostGeneratorClient({ offers }: Props) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
   const [postsSaved, setPostsSaved] = useState(false);
+
+  const postLabels = [
+    t("labels.mysterious"),
+    t("labels.benefit"),
+    t("labels.urgency"),
+    t("labels.community"),
+    t("labels.direct"),
+  ];
 
   useEffect(() => {
     setHistory(loadHistory());
@@ -93,7 +96,7 @@ export function PostGeneratorClient({ offers }: Props) {
       const data = await res.json() as { posts?: string[]; error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Generation failed. Please try again.");
+        setError(data.error ?? tErrors("generationFailed"));
       } else {
         const newPosts = data.posts ?? [];
         setPosts(newPosts);
@@ -110,7 +113,7 @@ export function PostGeneratorClient({ offers }: Props) {
         setActiveHistoryId(session.id);
       }
     } catch {
-      setError("Network error. Please check your connection.");
+      setError(tErrors("networkError"));
     } finally {
       setLoading(false);
     }
@@ -141,7 +144,7 @@ export function PostGeneratorClient({ offers }: Props) {
 
   async function copyAll() {
     const allText = posts
-      .map((p, i) => `— ${POST_LABELS[i]} —\n\n${p}`)
+      .map((p, i) => `— ${postLabels[i]} —\n\n${p}`)
       .join("\n\n" + "─".repeat(40) + "\n\n");
     await copyPost(allText, -1);
   }
@@ -171,10 +174,10 @@ export function PostGeneratorClient({ offers }: Props) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
-            Post Generator
+            {t("title")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Generate 5 creative Facebook recruitment posts for any active offer.
+            {t("description")}
           </p>
         </div>
         {history.length > 0 && (
@@ -185,7 +188,7 @@ export function PostGeneratorClient({ offers }: Props) {
             className="shrink-0"
           >
             <History className="h-4 w-4" />
-            History ({history.length})
+            {t("history.button", { count: history.length })}
             {historyOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </Button>
         )}
@@ -197,7 +200,7 @@ export function PostGeneratorClient({ offers }: Props) {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Recent Sessions
+              {t("history.title")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
@@ -223,7 +226,7 @@ export function PostGeneratorClient({ offers }: Props) {
       <Card>
         <CardContent className="pt-6 space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Select an offer</label>
+            <label className="text-sm font-medium">{t("selectOffer")}</label>
             <Select
               value={selectedOfferId}
               onChange={(e) => {
@@ -234,7 +237,7 @@ export function PostGeneratorClient({ offers }: Props) {
               }}
               className="w-full"
             >
-              <option value="">Choose an active offer…</option>
+              <option value="">{t("chooseOffer")}</option>
               {offers.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.company} — {o.accountType} ({o.language} · {o.location})
@@ -245,7 +248,7 @@ export function PostGeneratorClient({ offers }: Props) {
 
           {selectedOffer && (
             <div className="rounded-lg bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-              Generating for:{" "}
+              {t("generatingFor")}{" "}
               <span className="font-medium text-foreground">
                 {selectedOffer.accountType}
               </span>{" "}
@@ -261,11 +264,11 @@ export function PostGeneratorClient({ offers }: Props) {
               variant="outline"
             >
               {loading ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> {t("generating")}</>
               ) : posts.length > 0 ? (
-                <><RefreshCw className="h-4 w-4" /> Regenerate Posts</>
+                <><RefreshCw className="h-4 w-4" /> {t("regeneratePosts")}</>
               ) : (
-                <><Sparkles className="h-4 w-4" /> Generate Posts</>
+                <><Sparkles className="h-4 w-4" /> {t("generatePosts")}</>
               )}
             </Button>
             <Button
@@ -274,15 +277,15 @@ export function PostGeneratorClient({ offers }: Props) {
               disabled={posts.length === 0 || loading}
             >
               <Bookmark className="h-4 w-4" />
-              Save for Campaign
+              {t("saveForCampaign")}
             </Button>
           </div>
 
           {postsSaved && (
             <div className="rounded-lg px-4 py-3 text-sm bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 flex items-center justify-between gap-3">
-              <span>Posts saved! Ready to launch a campaign.</span>
+              <span>{t("postsSaved")}</span>
               <Link href="/campaigns" className="font-medium underline underline-offset-2 hover:no-underline shrink-0">
-                Go to Campaigns →
+                {t("goToCampaigns")} →
               </Link>
             </div>
           )}
@@ -318,13 +321,13 @@ export function PostGeneratorClient({ offers }: Props) {
         <>
           <div className="flex items-center justify-between flex-wrap gap-2">
             <p className="text-sm font-medium text-muted-foreground">
-              {posts.length} posts generated
+              {t("postsGenerated", { count: posts.length })}
             </p>
             <Button variant="outline" size="sm" onClick={copyAll}>
               {copiedIndex === -1 ? (
-                <><CheckCheck className="h-4 w-4 text-emerald-600" /> Copied all!</>
+                <><CheckCheck className="h-4 w-4 text-emerald-600" /> {t("copiedAll")}</>
               ) : (
-                <><Copy className="h-4 w-4" /> Copy all</>
+                <><Copy className="h-4 w-4" /> {t("copyAll")}</>
               )}
             </Button>
           </div>
@@ -339,7 +342,7 @@ export function PostGeneratorClient({ offers }: Props) {
                       {i + 1}
                     </span>
                     <span className="text-sm font-medium">
-                      {POST_LABELS[i] ?? `Post ${i + 1}`}
+                      {postLabels[i] ?? `Post ${i + 1}`}
                     </span>
                   </div>
                   <Button
@@ -349,9 +352,9 @@ export function PostGeneratorClient({ offers }: Props) {
                     className="opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     {copiedIndex === i ? (
-                      <><CheckCheck className="h-4 w-4 text-emerald-600" /> Copied!</>
+                      <><CheckCheck className="h-4 w-4 text-emerald-600" /> {t("copied")}</>
                     ) : (
-                      <><Copy className="h-4 w-4" /> Copy</>
+                      <><Copy className="h-4 w-4" /> {t("copy")}</>
                     )}
                   </Button>
                 </div>
@@ -369,9 +372,9 @@ export function PostGeneratorClient({ offers }: Props) {
                     onClick={() => copyPost(post, i)}
                   >
                     {copiedIndex === i ? (
-                      <><CheckCheck className="h-4 w-4 text-emerald-600" /> Copied!</>
+                      <><CheckCheck className="h-4 w-4 text-emerald-600" /> {t("copied")}</>
                     ) : (
-                      <><Copy className="h-4 w-4" /> Copy</>
+                      <><Copy className="h-4 w-4" /> {t("copy")}</>
                     )}
                   </Button>
                   <Button
@@ -379,7 +382,7 @@ export function PostGeneratorClient({ offers }: Props) {
                     onClick={() => startGroupPosting(post)}
                   >
                     <Send className="h-4 w-4" />
-                    Post to Groups
+                    {t("postToGroups")}
                   </Button>
                 </div>
               </div>
@@ -393,7 +396,7 @@ export function PostGeneratorClient({ offers }: Props) {
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-20 text-center space-y-2">
           <Sparkles className="h-8 w-8 text-muted-foreground/50" />
           <p className="text-sm text-muted-foreground">
-            Select an offer above and click Generate to create posts.
+            {t("empty")}
           </p>
         </div>
       )}

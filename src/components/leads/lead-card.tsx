@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Phone, Globe, Briefcase, User } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { LeadStatusBadge } from "./lead-status-badge";
@@ -15,6 +16,8 @@ interface LeadCardProps {
 }
 
 export function LeadCard({ lead, showRecruiter = false }: LeadCardProps) {
+  const t = useTranslations("leads");
+
   return (
     <Link href={`/leads/${lead.id}`} className="block group">
       <Card className="h-full transition-shadow group-hover:ring-ring/30">

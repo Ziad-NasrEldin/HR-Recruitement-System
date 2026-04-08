@@ -1,25 +1,28 @@
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import type { CommissionStatus } from "@/types";
-
-const STATUS_CONFIG: Record<
-  CommissionStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
-> = {
-  PENDING: { label: "Pending", variant: "secondary" },
-  ELIGIBLE: { label: "Eligible", variant: "default" },
-  PAID: { label: "Paid", variant: "outline" },
-};
 
 interface Props {
   status: CommissionStatus;
   className?: string;
 }
 
-export function CommissionStatusBadge({ status, className }: Props) {
-  const config = STATUS_CONFIG[status] ?? { label: status, variant: "secondary" };
+export async function CommissionStatusBadge({ status, className }: Props) {
+  const t = await getTranslations("commissions");
+  
+  const STATUS_CONFIG: Record<
+    CommissionStatus,
+    { labelKey: string; variant: "default" | "secondary" | "destructive" | "outline" }
+  > = {
+    PENDING: { labelKey: "PENDING", variant: "secondary" },
+    ELIGIBLE: { labelKey: "ELIGIBLE", variant: "default" },
+    PAID: { labelKey: "PAID", variant: "outline" },
+  };
+
+  const config = STATUS_CONFIG[status] ?? { labelKey: status, variant: "secondary" };
   return (
     <Badge variant={config.variant} className={className}>
-      {config.label}
+      {t(`status.${config.labelKey}`)}
     </Badge>
   );
 }

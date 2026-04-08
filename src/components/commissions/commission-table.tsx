@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -44,6 +45,7 @@ function formatCurrency(amount: number): string {
 }
 
 export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
+  const t = useTranslations("commissions");
   const [commissions, setCommissions] = useState<CommissionWithRelations[]>(initial);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
@@ -84,7 +86,7 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
   if (commissions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-        <p className="text-muted-foreground">No commissions found.</p>
+        <p className="text-muted-foreground">{t("empty")}</p>
       </div>
     );
   }
@@ -95,16 +97,16 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
         <table className="w-full text-sm">
           <thead className="border-b bg-muted/40">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Candidate</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Offer</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.candidate")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.offer")}</th>
               {isSuperAdmin && (
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Recruiter</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.recruiter")}</th>
               )}
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Amount</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Eligible</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Paid</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Created</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.amount")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.eligible")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.paid")}</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.created")}</th>
               {isSuperAdmin && <th className="w-10" />}
             </tr>
           </thead>
@@ -158,17 +160,17 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
                       <DropdownMenuContent align="end">
                         {c.status !== "ELIGIBLE" && (
                           <DropdownMenuItem onClick={() => updateStatus(c.id, "ELIGIBLE")}>
-                            Mark as Eligible
+                            {t("actions.markEligible")}
                           </DropdownMenuItem>
                         )}
                         {c.status !== "PAID" && (
                           <DropdownMenuItem onClick={() => updateStatus(c.id, "PAID")}>
-                            Mark as Paid
+                            {t("actions.markPaid")}
                           </DropdownMenuItem>
                         )}
                         {c.status !== "PENDING" && (
                           <DropdownMenuItem onClick={() => updateStatus(c.id, "PENDING")}>
-                            Reset to Pending
+                            {t("actions.resetToPending")}
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>

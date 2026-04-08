@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Radio,
   Play,
@@ -58,6 +59,9 @@ function formatDate(ts: number): string {
 }
 
 export function CampaignsClient({ availableGroups }: Props) {
+  const t = useTranslations("campaigns");
+  const tPostGen = useTranslations("postGenerator");
+  const tCommon = useTranslations("common");
   const router = useRouter();
 
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
@@ -175,7 +179,7 @@ export function CampaignsClient({ availableGroups }: Props) {
       <div>
         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
           <Radio className="h-6 w-6 text-primary" />
-          Campaigns
+          {t("title")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Launch and manage timed Facebook posting campaigns.
@@ -184,7 +188,7 @@ export function CampaignsClient({ availableGroups }: Props) {
 
       {/* ── Active Campaign ───────────────────────────────── */}
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Active Campaign</h2>
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t("active")}</h2>
 
         {activeCampaign ? (
           <Card className="border-emerald-300 dark:border-emerald-800">
@@ -204,7 +208,7 @@ export function CampaignsClient({ availableGroups }: Props) {
                 </div>
                 <Button variant="destructive" size="sm" onClick={handleStop}>
                   <Square className="h-4 w-4" />
-                  Stop
+                  {t("pause")}
                 </Button>
               </div>
 
@@ -244,7 +248,7 @@ export function CampaignsClient({ availableGroups }: Props) {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-10 text-center space-y-2">
             <Radio className="h-8 w-8 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">No active campaign.</p>
+            <p className="text-sm text-muted-foreground">{t("noCampaigns")}</p>
           </div>
         )}
       </section>
@@ -252,7 +256,7 @@ export function CampaignsClient({ availableGroups }: Props) {
       {/* ── Start New Campaign ────────────────────────────── */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Start New Campaign</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t("title")}</h2>
           {!showNewForm && !activeCampaign && (
             <Button
               size="sm"
@@ -270,13 +274,13 @@ export function CampaignsClient({ availableGroups }: Props) {
         {savedPosts ? (
           <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
             <div>
-              <p className="text-sm font-medium">Posts ready</p>
-              <p className="text-xs text-muted-foreground">{savedPosts.offerLabel} · saved {formatDate(savedPosts.savedAt)}</p>
+              <p className="text-sm font-medium">{t("postsReady")}</p>
+              <p className="text-xs text-muted-foreground">{savedPosts.offerLabel} · {t("postsSavedAt")} {formatDate(savedPosts.savedAt)}</p>
             </div>
             <button
               onClick={handleDiscardSavedPosts}
               className="text-muted-foreground hover:text-destructive transition-colors"
-              title="Discard saved posts"
+              title={t("tooltipDiscardPosts")}
             >
               <BookmarkX className="h-4 w-4" />
             </button>
@@ -288,7 +292,7 @@ export function CampaignsClient({ availableGroups }: Props) {
               onClick={() => router.push("/post-generator")}
               className="text-primary underline underline-offset-2 hover:no-underline text-sm"
             >
-              Go to Post Generator → generate posts → click &ldquo;Save for Campaign&rdquo;
+              {tPostGen("goToCampaigns")} → {tPostGen("generatePosts")} → {tPostGen("saveForCampaign")}
             </button>
           </div>
         )}
@@ -343,13 +347,13 @@ export function CampaignsClient({ availableGroups }: Props) {
                       className="text-xs text-primary hover:underline"
                       onClick={() => setSelectedGroups(new Set(availableGroups.map((g) => g.id)))}
                     >
-                      All
+                      {tCommon("all")}
                     </button>
                     <button
                       className="text-xs text-muted-foreground hover:underline"
                       onClick={() => setSelectedGroups(new Set())}
                     >
-                      None
+                      {tCommon("none")}
                     </button>
                   </div>
                 </div>
@@ -382,10 +386,10 @@ export function CampaignsClient({ availableGroups }: Props) {
                   disabled={selectedGroups.size === 0}
                 >
                   <Play className="h-4 w-4" />
-                  Start Campaign ({selectedGroups.size} groups)
+                  {t("title")} ({selectedGroups.size} groups)
                 </Button>
                 <Button variant="outline" onClick={() => setShowNewForm(false)}>
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
               </div>
             </CardContent>
@@ -399,7 +403,7 @@ export function CampaignsClient({ availableGroups }: Props) {
             onClick={() => setShowNewForm(true)}
           >
             <Play className="h-4 w-4" />
-            Configure & Start Campaign
+            {t("title")}
           </Button>
         )}
       </section>
@@ -407,14 +411,14 @@ export function CampaignsClient({ availableGroups }: Props) {
       {/* ── Campaign History ──────────────────────────────── */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Campaign History</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t("completed")}</h2>
           {history.length > 0 && (
             <button
               onClick={handleClearHistory}
               className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              Clear
+              {tCommon("clear")}
             </button>
           )}
         </div>
@@ -422,17 +426,17 @@ export function CampaignsClient({ availableGroups }: Props) {
         {history.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-10 text-center space-y-2">
             <Clock className="h-8 w-8 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">No completed campaigns yet.</p>
+            <p className="text-sm text-muted-foreground">{t("noCampaigns")}</p>
           </div>
         ) : (
           <div className="rounded-xl border overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-muted-foreground">
                 <tr>
-                  <th className="text-left px-4 py-3 font-medium">Offer</th>
-                  <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">Date</th>
+                  <th className="text-left px-4 py-3 font-medium">{tCommon("name")}</th>
+                  <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">{tCommon("date")}</th>
                   <th className="text-left px-4 py-3 font-medium">Groups</th>
-                  <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">Result</th>
+                  <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">{tCommon("status")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y">

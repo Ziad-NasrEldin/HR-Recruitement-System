@@ -13,10 +13,14 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { LogOut } from "lucide-react";
 import { ROLE_LABELS } from "@/types";
 import { ReminderBell } from "@/components/reminders/reminder-bell";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { getTranslations } from "next-intl/server";
 
 export async function Header() {
   const session = await auth();
   if (!session?.user) return null;
+
+  const t = await getTranslations("nav");
 
   const displayName = session.user.name ?? session.user.email ?? "?";
   const initials = displayName
@@ -31,6 +35,7 @@ export async function Header() {
       <MobileSidebar role={session.user.role} />
       <div className="flex-1" />
       <div className="flex items-center gap-4">
+        <LanguageSwitcher />
         <ReminderBell />
         <DropdownMenu>
           {/*
@@ -67,14 +72,14 @@ export async function Header() {
             <form
               action={async () => {
                 "use server";
-                await signOut({ redirectTo: "/login" });
+                await signOut({ redirectTo: "/en/login" });
               }}
             >
               <DropdownMenuItem
                 render={<button type="submit" className="w-full cursor-pointer" />}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Sign out
+                {t("signOut")}
               </DropdownMenuItem>
             </form>
           </DropdownMenuContent>

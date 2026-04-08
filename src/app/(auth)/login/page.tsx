@@ -1,12 +1,15 @@
 import { Suspense } from "react";
 import { LoginForm } from "./login-form";
 import { Briefcase } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export const metadata = {
   title: "Login | HR Recruitment System",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getTranslations("auth");
+
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-24">
       <div className="w-full max-w-md">
@@ -18,7 +21,7 @@ export default function LoginPage() {
             HR Recruitment
           </h1>
           <p className="text-muted-foreground max-w-[280px] mx-auto text-balance">
-            Enter your credentials to access the recruitment management system.
+            {t("loginDescription")}
           </p>
         </div>
         

@@ -2,12 +2,14 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 export function OfferFilters() {
+  const t = useTranslations("offers");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -22,7 +24,6 @@ export function OfferFilters() {
           params.set(key, value);
         }
       }
-      // reset to page 1 on filter change
       params.delete("page");
       return params.toString();
     },
@@ -51,14 +52,14 @@ export function OfferFilters() {
         onChange={(e) => handleChange("status", e.target.value)}
         aria-label="Filter by status"
       >
-        <option value="">All statuses</option>
-        <option value="ACTIVE">Active</option>
-        <option value="ON_HOLD">On Hold</option>
+        <option value="">{t("filters.allStatuses")}</option>
+        <option value="ACTIVE">{t("status.ACTIVE")}</option>
+        <option value="ON_HOLD">{t("status.ON_HOLD")}</option>
       </Select>
 
       <Input
         className="w-44"
-        placeholder="Language…"
+        placeholder={t("filters.language")}
         defaultValue={searchParams.get("language") ?? ""}
         onBlur={(e) => handleChange("language", e.target.value)}
         onKeyDown={(e) => {
@@ -75,16 +76,16 @@ export function OfferFilters() {
         onChange={(e) => handleChange("workModel", e.target.value)}
         aria-label="Filter by work model"
       >
-        <option value="">All work models</option>
-        <option value="WFH">Work From Home</option>
-        <option value="ON_SITE">On Site</option>
-        <option value="HYBRID">Hybrid</option>
+        <option value="">{t("filters.allWorkModels")}</option>
+        <option value="WFH">{t("workModel.WFH")}</option>
+        <option value="ON_SITE">{t("workModel.ON_SITE")}</option>
+        <option value="HYBRID">{t("workModel.HYBRID")}</option>
       </Select>
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1">
           <X className="h-3.5 w-3.5" />
-          Clear
+          {t("filters.clear")}
         </Button>
       )}
     </div>

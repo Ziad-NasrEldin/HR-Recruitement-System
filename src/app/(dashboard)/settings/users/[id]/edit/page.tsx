@@ -3,6 +3,7 @@ import { ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { requireSuperAdmin } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { UserForm } from "@/components/users/user-form";
@@ -14,6 +15,7 @@ interface PageProps {
 }
 
 export default async function EditUserPage({ params }: PageProps) {
+  const t = await getTranslations("settings");
   await requireSuperAdmin();
 
   const { id } = await params;
@@ -43,7 +45,7 @@ export default async function EditUserPage({ params }: PageProps) {
           <ChevronLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit User</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("editUserPage")}</h1>
           <p className="text-sm text-muted-foreground">{user.email}</p>
         </div>
       </div>

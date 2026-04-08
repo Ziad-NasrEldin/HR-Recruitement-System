@@ -29,11 +29,12 @@ export const authConfig = {
     },
     async authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
-      const isOnLoginPage = request.nextUrl.pathname.startsWith("/login");
+      const pathname = request.nextUrl.pathname;
+      const isOnLoginPage = pathname.startsWith("/en/login") || pathname.startsWith("/ar/login") || pathname.startsWith("/fr/login") || pathname === "/login";
 
       if (isOnLoginPage) {
         if (isLoggedIn) {
-          return Response.redirect(new URL("/dashboard", request.nextUrl));
+          return Response.redirect(new URL("/en/dashboard", request.nextUrl));
         }
         return true;
       }

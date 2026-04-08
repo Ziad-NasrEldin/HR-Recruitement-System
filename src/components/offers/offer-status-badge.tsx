@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import type { OfferStatus } from "@/generated/prisma/client";
 
@@ -5,17 +6,19 @@ interface OfferStatusBadgeProps {
   status: OfferStatus;
 }
 
-export function OfferStatusBadge({ status }: OfferStatusBadgeProps) {
+export async function OfferStatusBadge({ status }: OfferStatusBadgeProps) {
+  const t = await getTranslations("offers");
+
   if (status === "ACTIVE") {
     return (
       <Badge variant="default" className="bg-emerald-600 text-white dark:bg-emerald-500">
-        Active
+        {t("status.ACTIVE")}
       </Badge>
     );
   }
   return (
     <Badge variant="secondary" className="text-muted-foreground">
-      On Hold
+      {t("status.ON_HOLD")}
     </Badge>
   );
 }
