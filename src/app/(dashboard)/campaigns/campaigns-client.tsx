@@ -163,7 +163,7 @@ export function CampaignsClient({ availableGroups }: Props) {
   }
 
   function handleClearHistory() {
-    if (!confirm("Clear campaign history?")) return;
+    if (!confirm(t("confirmClearHistory"))) return;
     clearHistory();
     setHistory([]);
   }

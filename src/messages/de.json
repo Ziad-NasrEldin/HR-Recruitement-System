@@ -245,6 +245,7 @@
       "status": "Status",
       "commissionAmount": "Commission Amount",
       "commissionPeriod": "Commission Period (days)",
+      "importSuccess": "{count} Angebot(e) importiert{skipped > 0 ? ` (${skipped} übersprungen)` : ''}.",
       "description": "Description",
       "requirements": "Requirements",
       "benefits": "Benefits",
@@ -489,10 +490,26 @@
     "sourceDoc2": "Doc 2",
     "sourceExcel": "Excel",
     "sourceManual": "Manual",
-    "tooltipRestore": "Restore group",
-    "tooltipDeprecate": "Mark as deprecated",
-    "tooltipDiscardPosts": "Discard saved posts",
-    "tooltipMarkDone": "Mark as done"
+    "tooltipRestore": "Gruppe wiederherstellen",
+    "tooltipDeprecate": "Als veraltet markieren",
+    "tooltipDiscardPosts": "Gespeicherte Beiträge verwerfen",
+    "tooltipMarkDone": "Als erledigt markieren",
+    "confirmDelete": "Diese Gruppe löschen?",
+    "confirmClearHistory": "Kampagnenverlauf löschen?",
+    "aria": {
+      "reminders": "Erinnerungen",
+      "actions": "Aktionen",
+      "salaryMin": "Mindestgehalt",
+      "salaryMax": "Höchstgehalt",
+      "currency": "Währung",
+      "commissionCurrency": "Provisionswährung",
+      "filterStatus": "Nach Status filtern",
+      "filterLanguage": "Nach Sprache filtern",
+      "filterWorkModel": "Nach Arbeitsmodell filtern",
+      "searchLeads": "Kandidaten suchen",
+      "filterOffer": "Nach Angebot filtern",
+      "filterRecruiter": "Nach Personalvermittler filtern"
+    }
   },
   "analytics": {
     "title": "Analytics",

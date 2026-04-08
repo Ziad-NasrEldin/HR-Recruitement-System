@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export function ImportOffersButton() {
   const t = useTranslations("offers");
+  const tErrors = useTranslations("errors");
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -25,14 +26,14 @@ export function ImportOffersButton() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(`Import failed: ${data.error}`);
+        alert(tErrors("importFailed", { error: data.error }));
         return;
       }
 
-      alert(`Successfully imported ${data.created} offer${data.created !== 1 ? "s" : ""}${data.skipped > 0 ? ` (${data.skipped} skipped)` : ""}.`);
+      alert(t("importSuccess", { count: data.created, skipped: data.skipped }));
       router.refresh();
     } catch {
-      alert("Import failed. Please try again.");
+      alert(tErrors("networkError"));
     } finally {
       setLoading(false);
       if (inputRef.current) inputRef.current.value = "";

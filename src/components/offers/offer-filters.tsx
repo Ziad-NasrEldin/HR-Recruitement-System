@@ -50,7 +50,7 @@ export function OfferFilters() {
         className="w-36"
         value={searchParams.get("status") ?? ""}
         onChange={(e) => handleChange("status", e.target.value)}
-        aria-label="Filter by status"
+        aria-label={t("aria.filterStatus")}
       >
         <option value="">{t("filters.allStatuses")}</option>
         <option value="ACTIVE">{t("status.ACTIVE")}</option>
@@ -67,14 +67,14 @@ export function OfferFilters() {
             handleChange("language", (e.target as HTMLInputElement).value);
           }
         }}
-        aria-label="Filter by language"
+        aria-label={t("aria.filterLanguage")}
       />
 
       <Select
         className="w-40"
         value={searchParams.get("workModel") ?? ""}
         onChange={(e) => handleChange("workModel", e.target.value)}
-        aria-label="Filter by work model"
+        aria-label={t("aria.filterWorkModel")}
       >
         <option value="">{t("filters.allWorkModels")}</option>
         <option value="WFH">{t("workModel.WFH")}</option>

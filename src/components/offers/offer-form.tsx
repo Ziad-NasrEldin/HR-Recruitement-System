@@ -220,7 +220,7 @@ export function OfferForm({ offer }: OfferFormProps) {
                 placeholder={t("form.minSalary")}
                 required
                 className="flex-1"
-                aria-label="Salary minimum"
+                aria-label={t("aria.salaryMin")}
               />
               <span className="text-muted-foreground">–</span>
               <Input
@@ -231,14 +231,14 @@ export function OfferForm({ offer }: OfferFormProps) {
                 placeholder={t("form.maxSalary")}
                 required
                 className="flex-1"
-                aria-label="Salary maximum"
+                aria-label={t("aria.salaryMax")}
               />
               <Input
                 value={form.salaryCurrency}
                 onChange={set("salaryCurrency")}
                 placeholder="EGP"
                 className="w-20"
-                aria-label="Currency"
+                aria-label={t("aria.currency")}
               />
             </div>
           </div>
@@ -268,7 +268,7 @@ export function OfferForm({ offer }: OfferFormProps) {
                 value={form.commissionCurrency}
                 onChange={set("commissionCurrency")}
                 className="w-24"
-                aria-label="Commission currency"
+                aria-label={t("aria.commissionCurrency")}
               >
                 <option value="EGP">EGP</option>
                 <option value="USD">USD</option>

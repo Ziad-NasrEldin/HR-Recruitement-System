@@ -245,6 +245,7 @@
       "status": "Status",
       "commissionAmount": "Commission Amount",
       "commissionPeriod": "Commission Period (days)",
+      "importSuccess": "Successfully imported {count} offer(s){skipped > 0 ? ` (${skipped} skipped)` : ''}.",
       "description": "Description",
       "requirements": "Requirements",
       "benefits": "Benefits",
@@ -503,7 +504,23 @@
     "tooltipRestore": "Restore group",
     "tooltipDeprecate": "Mark as deprecated",
     "tooltipDiscardPosts": "Discard saved posts",
-    "tooltipMarkDone": "Mark as done"
+    "tooltipMarkDone": "Mark as done",
+    "confirmDelete": "Delete this group?",
+    "confirmClearHistory": "Clear campaign history?",
+    "aria": {
+      "reminders": "Reminders",
+      "actions": "Actions",
+      "salaryMin": "Salary minimum",
+      "salaryMax": "Salary maximum",
+      "currency": "Currency",
+      "commissionCurrency": "Commission currency",
+      "filterStatus": "Filter by status",
+      "filterLanguage": "Filter by language",
+      "filterWorkModel": "Filter by work model",
+      "searchLeads": "Search leads",
+      "filterOffer": "Filter by offer",
+      "filterRecruiter": "Filter by recruiter"
+    }
   },
   "analytics": {
     "title": "Analytics",

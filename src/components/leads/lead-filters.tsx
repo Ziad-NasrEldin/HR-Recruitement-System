@@ -64,14 +64,14 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
         onKeyDown={(e) => {
           if (e.key === "Enter") handleChange("search", (e.target as HTMLInputElement).value);
         }}
-        aria-label="Search leads"
+        aria-label={t("aria.searchLeads")}
       />
 
       <Select
         className="w-44"
         value={searchParams.get("status") ?? ""}
         onChange={(e) => handleChange("status", e.target.value)}
-        aria-label="Filter by status"
+        aria-label={t("aria.filterStatus")}
       >
         <option value="">{t("filters.allStatuses")}</option>
         {Object.entries(LEAD_STATUS_LABELS).map(([value, _]) => (
@@ -83,7 +83,7 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
         className="w-48"
         value={searchParams.get("offerId") ?? ""}
         onChange={(e) => handleChange("offerId", e.target.value)}
-        aria-label="Filter by offer"
+        aria-label={t("aria.filterOffer")}
       >
         <option value="">{t("filters.allOffers")}</option>
         {offers.map((o) => (
@@ -96,7 +96,7 @@ export function LeadFilters({ offers, recruiters = [], isSuperAdmin = false }: L
           className="w-40"
           value={searchParams.get("recruiterId") ?? ""}
           onChange={(e) => handleChange("recruiterId", e.target.value)}
-          aria-label="Filter by recruiter"
+          aria-label={t("aria.filterRecruiter")}
         >
           <option value="">{t("filters.allRecruiters")}</option>
           {recruiters.map((r) => (

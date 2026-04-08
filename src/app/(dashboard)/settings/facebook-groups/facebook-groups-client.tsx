@@ -350,7 +350,7 @@ export function FacebookGroupsClient({ initialGroups }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this group?")) return;
+    if (!confirm(t("confirmDelete"))) return;
     const res = await fetch(`/api/facebook-groups/${id}`, { method: "DELETE" });
     if (res.ok) {
       setGroups((prev) => prev.filter((g) => g.id !== id));

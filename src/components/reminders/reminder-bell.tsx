@@ -140,7 +140,7 @@ export function ReminderBell() {
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label="Reminders"
+        aria-label={t("aria.reminders")}
       >
         <Bell className="h-5 w-5 text-muted-foreground" />
         {totalCount > 0 && (

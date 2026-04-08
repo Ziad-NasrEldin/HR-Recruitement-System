@@ -46,6 +46,7 @@ function formatCurrency(amount: number): string {
 
 export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
   const t = useTranslations("commissions");
+  const tCommon = useTranslations("common");
   const [commissions, setCommissions] = useState<CommissionWithRelations[]>(initial);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
@@ -153,7 +154,7 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
                       <DropdownMenuTrigger
                         className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
                         disabled={loadingId === c.id}
-                        aria-label="Actions"
+                        aria-label={tCommon("actions")}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </DropdownMenuTrigger>

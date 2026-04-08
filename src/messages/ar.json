@@ -245,6 +245,7 @@
       "status": "الحالة",
       "commissionAmount": "مبلغ العمولة",
       "commissionPeriod": "فترة العمولة (أيام)",
+      "importSuccess": "تم استيراد {count} عرض{skipped > 0 ? ` (${skipped} تم تخطيها)` : ''}.",
       "description": "الوصف",
       "requirements": "المتطلبات",
       "benefits": "المزايا",
@@ -502,7 +503,23 @@
     "tooltipRestore": "استعادة المجموعة",
     "tooltipDeprecate": "تحديد كمهمل",
     "tooltipDiscardPosts": "تجاهل المنشورات المحفوظة",
-    "tooltipMarkDone": "تحديد كمكتمل"
+    "tooltipMarkDone": "تحديد كمكتمل",
+    "confirmDelete": "حذف هذه المجموعة؟",
+    "confirmClearHistory": "مسح سجل الحملات؟",
+    "aria": {
+      "reminders": "التذكيرات",
+      "actions": "الإجراءات",
+      "salaryMin": "الراتب الأدنى",
+      "salaryMax": "الراتب الأقصى",
+      "currency": "العملة",
+      "commissionCurrency": "عملة العمولة",
+      "filterStatus": "تصفية حسب الحالة",
+      "filterLanguage": "تصفية حسب اللغة",
+      "filterWorkModel": "تصفية حسب نمط العمل",
+      "searchLeads": "البحث عن العملاء المحتملين",
+      "filterOffer": "تصفية حسب العرض",
+      "filterRecruiter": "تصفية حسب المجند"
+    }
   },
   "analytics": {
     "title": "التحليلات",
