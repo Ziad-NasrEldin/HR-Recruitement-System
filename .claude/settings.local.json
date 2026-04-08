@@ -12,7 +12,10 @@
       "Bash(sc query:*)",
       "Bash(Get-Service *postgres*)",
       "Bash(\"C:/Program Files/PostgreSQL/18/bin/psql.exe\" -U postgres -h 127.0.0.1 -c \"ALTER USER postgres WITH PASSWORD ''postgres'';\")",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(docker compose:*)"
     ]
   }
 }
