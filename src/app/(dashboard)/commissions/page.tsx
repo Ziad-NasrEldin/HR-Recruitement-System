@@ -30,6 +30,7 @@ interface PageProps {
 
 export default async function CommissionsPage({ searchParams }: PageProps) {
   const t = await getTranslations("commissions");
+  const tCommon = await getTranslations("common");
   const session = await auth();
   const params = await searchParams;
 
@@ -183,7 +184,7 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
               href={buildPageUrl(page - 1)}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              {t("previous")}
+              {tCommon("previous")}
             </Link>
           )}
           <span className="text-sm text-muted-foreground">
@@ -194,7 +195,7 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
               href={buildPageUrl(page + 1)}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              {t("next")}
+              {tCommon("next")}
             </Link>
           )}
         </div>
