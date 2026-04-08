@@ -28,7 +28,8 @@
     "date": "التاريخ",
     "time": "الوقت",
     "none": "لا يوجد",
-    "all": "الكل"
+    "all": "الكل",
+    "newPassword": "كلمة مرور جديدة"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -90,26 +91,28 @@
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ"
     },
-    "form": {
-      "personalInfo": "المعلومات الشخصية",
-      "fullName": "الاسم الكامل",
-      "phone": "الهاتف",
-      "email": "البريد الإلكتروني",
-      "whatsapp": "رقم واتساب",
-      "location": "الموقع",
-      "qualifications": "المؤهلات",
+"form": {
+      "company": "الشركة",
+      "accountType": "نوع الحساب",
       "language": "اللغة",
-      "languageLevel": "مستوى اللغة",
-      "graduationStatus": "حالة التخرج",
-      "militaryStatus": "الحالة العسكرية",
-      "previousApps": "التقديمات السابقة",
-      "linkedOffer": "العرض المرتبط",
-      "jobOffer": "عرض العمل",
-      "notes": "ملاحظات",
-      "notesPlaceholder": "أي ملاحظات إضافية حول هذا المرشح...",
-      "saving": "جاري الحفظ...",
-      "creating": "جاري الإنشاء...",
-      "saveChanges": "حفظ التغييرات"
+      "location": "الموقع",
+      "workModel": "نموذج العمل",
+      "salaryRange": "نطاق الراتب",
+      "benefits": "المزايا",
+      "interviewProcess": "عملية المقابلة",
+      "requirements": "المتطلبات",
+      "applicationForm": "نموذج التقديم",
+      "importExcel": "استيراد من Excel",
+      "importing": "جاري الاستيراد...",
+      "setOnHold": "تعليق",
+      "setActive": "تفعيل",
+      "updating": "جاري التحديث...",
+      "graduationRequirement": "متطلب التخرج",
+      "workingHours": "ساعات العمل",
+      "shift": "وردية",
+      "daysOff": "أيام الإجازة",
+      "commissionAmount": "مبلغ العمولة",
+      "commissionPeriod": "فترة العمولة (أيام)"
     },
     "detail": {
       "pipelineStage": "مرحلة خط الأنابيب",
@@ -431,6 +434,13 @@
     "createFirst": "أنشئ حملتك الأولى",
     "postsReady": "المنشورات جاهزة",
     "postsSavedAt": "تم الحفظ",
+    "interval": {
+      "5min": "5 دقائق",
+      "10min": "10 دقائق",
+      "15min": "15 دقائق",
+      "30min": "30 دقيقة",
+      "manual": "يدوي"
+    },
     "widget": {
       "postNow": "نشر الآن",
       "copiedPaste": "تم النسخ! الصق وانشر",

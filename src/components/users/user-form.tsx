@@ -119,7 +119,7 @@ export function UserForm({ user }: Props) {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
+          placeholder={isEditing ? tCommon("newPassword") : "••••••••"}
           required={!isEditing}
           autoComplete="new-password"
         />

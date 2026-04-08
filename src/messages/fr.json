@@ -28,7 +28,8 @@
     "date": "Date",
     "time": "Heure",
     "none": "Aucun",
-    "all": "Tout"
+    "all": "Tout",
+    "newPassword": "Nouveau mot de passe"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -89,26 +90,28 @@
       "fromDate": "Date de début",
       "toDate": "Date de fin"
     },
-    "form": {
-      "personalInfo": "Informations personnelles",
-      "fullName": "Nom complet",
-      "phone": "Téléphone",
-      "email": "E-mail",
-      "whatsapp": "Numéro WhatsApp",
-      "location": "Lieu",
-      "qualifications": "Qualifications",
+"form": {
+      "company": "Entreprise",
+      "accountType": "Type de compte",
       "language": "Langue",
-      "languageLevel": "Niveau de langue",
-      "graduationStatus": "Statut de graduation",
-      "militaryStatus": "Statut militaire",
-      "previousApps": "Candidatures précédentes",
-      "linkedOffer": "Offre liée",
-      "jobOffer": "Offre d'emploi",
-      "notes": "Notes",
-      "notesPlaceholder": "Notes supplémentaires sur ce candidat...",
-      "saving": "Enregistrement...",
-      "creating": "Création...",
-      "saveChanges": "Enregistrer les modifications"
+      "location": "Emplacement",
+      "workModel": "Modèle de travail",
+      "salaryRange": "Fourchette de salaire",
+      "benefits": "Avantages",
+      "interviewProcess": "Processus d'entretien",
+      "requirements": "Exigences",
+      "applicationForm": "Formulaire de candidature",
+      "importExcel": "Importer Excel",
+      "importing": "Importation...",
+      "setOnHold": "Mettre en attente",
+      "setActive": "Activer",
+      "updating": "Mise à jour...",
+      "graduationRequirement": "Exigence de graduation",
+      "workingHours": "Heures de travail",
+      "shift": "Poste",
+      "daysOff": "Jours de repos",
+      "commissionAmount": "Montant de la commission",
+      "commissionPeriod": "Période de commission (jours)"
     },
     "detail": {
       "pipelineStage": "Étape du pipeline",
@@ -430,6 +433,13 @@
     "createFirst": "Créez votre première campagne",
     "postsReady": "Publications prêtes",
     "postsSavedAt": "enregistré",
+    "interval": {
+      "5min": "5 min",
+      "10min": "10 min",
+      "15min": "15 min",
+      "30min": "30 min",
+      "manual": "Manuel"
+    },
     "widget": {
       "postNow": "PUBLIER",
       "copiedPaste": "Copié! Coller & Publier",

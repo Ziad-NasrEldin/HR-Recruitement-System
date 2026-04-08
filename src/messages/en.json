@@ -28,7 +28,8 @@
     "date": "Date",
     "time": "Time",
     "none": "None",
-    "all": "All"
+    "all": "All",
+    "newPassword": "New password"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -90,26 +91,28 @@
       "fromDate": "From date",
       "toDate": "To date"
     },
-    "form": {
-      "personalInfo": "Personal Information",
-      "fullName": "Full Name",
-      "phone": "Phone",
-      "email": "Email",
-      "whatsapp": "WhatsApp Number",
-      "location": "Location",
-      "qualifications": "Qualifications",
+"form": {
+      "company": "Company",
+      "accountType": "Account Type",
       "language": "Language",
-      "languageLevel": "Language Level",
-      "graduationStatus": "Graduation Status",
-      "militaryStatus": "Military Status",
-      "previousApps": "Previous Applications",
-      "linkedOffer": "Linked Offer",
-      "jobOffer": "Job Offer",
-      "notes": "Notes",
-      "notesPlaceholder": "Any additional notes about this candidate…",
-      "saving": "Saving…",
-      "creating": "Creating…",
-      "saveChanges": "Save Changes"
+      "location": "Location",
+      "workModel": "Work Model",
+      "salaryRange": "Salary Range",
+      "benefits": "Benefits",
+      "interviewProcess": "Interview Process",
+      "requirements": "Requirements",
+      "applicationForm": "Application Form",
+      "importExcel": "Import Excel",
+      "importing": "Importing…",
+      "setOnHold": "Set On Hold",
+      "setActive": "Set Active",
+      "updating": "Updating…",
+      "graduationRequirement": "Graduation Requirement",
+      "workingHours": "Working Hours",
+      "shift": "Shift",
+      "daysOff": "Days Off",
+      "commissionAmount": "Commission Amount",
+      "commissionPeriod": "Commission Period (days)"
     },
     "detail": {
       "pipelineStage": "Pipeline Stage",
@@ -431,6 +434,13 @@
     "createFirst": "Create your first campaign",
     "postsReady": "Posts ready",
     "postsSavedAt": "saved",
+    "interval": {
+      "5min": "5 min",
+      "10min": "10 min",
+      "15min": "15 min",
+      "30min": "30 min",
+      "manual": "Manual"
+    },
     "widget": {
       "postNow": "POST NOW",
       "copiedPaste": "Copied! Paste & Post",

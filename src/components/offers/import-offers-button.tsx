@@ -3,9 +3,11 @@
 import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 export function ImportOffersButton() {
+  const t = useTranslations("offers");
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -52,7 +54,7 @@ export function ImportOffersButton() {
         disabled={loading}
       >
         <Upload className="size-4" />
-        {loading ? "Importing…" : "Import Excel"}
+        {loading ? t("form.importing") : t("form.importExcel")}
       </Button>
     </>
   );

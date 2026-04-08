@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Bell, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import {
@@ -23,16 +23,31 @@ const REMINDER_TYPE_LABELS: Record<string, string> = {
   DAY_30: "Day 30 Check-in",
 };
 
-interface Reminder {
-  id: string;
-  type: string;
-  dueDate: string;
-  isCompleted: boolean;
-  lead: { id: string; name: string; phone: string };
-  recruiter: { id: string; name: string };
-}
+const REMINDER_TYPE_LABELS_AR: Record<string, string> = {
+  PRE_INTERVIEW: "قبل المقابلة",
+  POST_INTERVIEW: "بعد المقابلة",
+  DAY_10: "متابعة اليوم العاشر",
+  DAY_15: "متابعة اليوم الخامس عشر",
+  DAY_30: "متابعة اليوم الثلاثين",
+};
 
-function formatDueDate(dateStr: string): string {
+const REMINDER_TYPE_LABELS_FR: Record<string, string> = {
+  PRE_INTERVIEW: "Avant l'entretien",
+  POST_INTERVIEW: "Après l'entretien",
+  DAY_10: "Jour 10",
+  DAY_15: "Jour 15",
+  DAY_30: "Jour 30",
+};
+
+const REMINDER_TYPE_LABELS_DE: Record<string, string> = {
+  PRE_INTERVIEW: "Vor dem Interview",
+  POST_INTERVIEW: "Nach dem Interview",
+  DAY_10: "Tag 10",
+  DAY_15: "Tag 15",
+  DAY_30: "Tag 30",
+};
+
+function formatDueDate(dateStr: string, locale: string): string {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = date.getTime() - now.getTime();
@@ -40,17 +55,33 @@ function formatDueDate(dateStr: string): string {
 
   if (diffDays < 0) {
     const overdueDays = Math.abs(diffDays);
+    if (locale === "ar") return overdueDays === 1 ? "متأخر يوم واحد" : `متأخر ${overdueDays} أيام`;
+    if (locale === "fr") return overdueDays === 1 ? "1 jour de retard" : `${overdueDays} jours de retard`;
+    if (locale === "de") return overdueDays === 1 ? "1 Tag überfällig" : `${overdueDays} Tage überfällig`;
     return overdueDays === 1 ? "1 day overdue" : `${overdueDays} days overdue`;
   }
-  if (diffDays === 0) return "Due today";
-  if (diffDays === 1) return "Due tomorrow";
+  if (diffDays === 0) {
+    if (locale === "ar") return "مستحق اليوم";
+    if (locale === "fr") return "Dû aujourd'hui";
+    if (locale === "de") return "Heute fällig";
+    return "Due today";
+  }
+  if (diffDays === 1) {
+    if (locale === "ar") return "مستحق غداً";
+    if (locale === "fr") return "Dû demain";
+    if (locale === "de") return "Morgen fällig";
+    return "Due tomorrow";
+  }
+  if (locale === "ar") return `مستحق خلال ${diffDays} أيام`;
+  if (locale === "fr") return `Dû dans ${diffDays} jours`;
+  if (locale === "de") return `Fällig in ${diffDays} Tagen`;
   return `Due in ${diffDays} days`;
 }
 
 export function ReminderBell() {
   const t = useTranslations("facebookGroups");
   const tReminders = useTranslations("reminders");
-  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const locale = useLocale();
   const [overdue, setOverdue] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -164,7 +195,7 @@ export function ReminderBell() {
                           isOverdue ? "text-destructive font-medium" : "text-muted-foreground"
                         )}
                       >
-                        {formatDueDate(reminder.dueDate)}
+                        {formatDueDate(reminder.dueDate, locale)}
                       </p>
                     </div>
                     <button
