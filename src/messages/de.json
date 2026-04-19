@@ -62,13 +62,18 @@
     "activeOffers": "Active Offers",
     "live": "Live",
     "pendingCommissions": "Pending Commissions",
-    "awaitingVerification": "Awaiting verification",
+    "awaitingVerification": "{count} Provisionen warten auf Prüfung",
     "recentActivity": "Recent Activity",
     "processed": "Processed",
     "thisMonth": "this month",
     "viewAll": "View all",
     "totalCandidates": "Total candidates currently in the pipeline across all active offers.",
-    "activeRecruitmentCampaigns": "Active recruitment campaigns"
+    "activeRecruitmentCampaigns": "Active recruitment campaigns",
+    "recentLeads": "{count} neue Leads in den letzten 30 Tagen",
+    "recentActivityDescription": "{overdue} überfällige Erinnerungen benötigen aktuell Aufmerksamkeit.",
+    "activityByRecruiter": "{recruiter} · Aktualisiert {updatedAt}",
+    "activityUpdated": "Aktualisiert {updatedAt}",
+    "noRecentActivity": "Keine aktuelle Lead-Aktivität gefunden."
   },
   "leads": {
     "title": "Leads",

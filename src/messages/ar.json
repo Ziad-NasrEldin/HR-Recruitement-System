@@ -62,13 +62,18 @@
     "activeOffers": "العروض النشطة",
     "live": "نشط",
     "pendingCommissions": "العمولات المعلقة",
-    "awaitingVerification": "في انتظار التحقق",
+    "awaitingVerification": "{count} عمولات بانتظار المراجعة",
     "recentActivity": "النشاط الأخير",
     "processed": "تمت المعالجة",
     "thisMonth": "هذا الشهر",
     "viewAll": "عرض الكل",
     "totalCandidates": "إجمالي المرشحين حالياً في خط الأنابيب عبر جميع العروض النشطة.",
-    "activeRecruitmentCampaigns": "حملات التوظيف النشطة"
+    "activeRecruitmentCampaigns": "حملات التوظيف النشطة",
+    "recentLeads": "{count} عميلًا محتملًا جديدًا خلال آخر 30 يومًا",
+    "recentActivityDescription": "{overdue} تذكيرات متأخرة تحتاج إلى انتباه الآن.",
+    "activityByRecruiter": "{recruiter} · تم التحديث {updatedAt}",
+    "activityUpdated": "تم التحديث {updatedAt}",
+    "noRecentActivity": "لم يتم العثور على نشاط حديث للعملاء المحتملين."
   },
   "leads": {
     "title": "العملاء المحتملون",

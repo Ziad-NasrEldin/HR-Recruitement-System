@@ -31,18 +31,6 @@ const iconMap: Record<string, LucideIcon> = {
   Radio,
 };
 
-const navKeyMap: Record<string, string> = {
-  dashboard: "dashboard",
-  leads: "leads",
-  offers: "offers",
-  commissions: "commissions",
-  analytics: "analytics",
-  postGenerator: "postGenerator",
-  campaigns: "campaigns",
-  facebookGroups: "facebookGroups",
-  settings: "settings",
-};
-
 interface SidebarProps {
   role: Role;
 }
@@ -63,7 +51,6 @@ export function Sidebar({ role }: SidebarProps) {
       <nav className="flex flex-col gap-1 p-4" aria-label="Main navigation">
         {items.map((item) => {
           const Icon = iconMap[item.icon];
-          const navKey = Object.entries(navKeyMap).find(([_, v]) => item.href.includes(v))?.[0] || "";
           const isActive =
             pathname === item.href ||
             pathname === `/${item.href.replace("/", "")}` ||
@@ -85,7 +72,7 @@ export function Sidebar({ role }: SidebarProps) {
               )}
             >
               {Icon && <Icon className="h-4 w-4" />}
-              {navKey && t(navKey)}
+              {t(item.navKey)}
             </Link>
           );
         })}
