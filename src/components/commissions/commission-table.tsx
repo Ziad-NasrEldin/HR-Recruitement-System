@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CommissionStatusBadge } from "./commission-status-badge";
 import { MoreHorizontal, ExternalLink } from "lucide-react";
+import { cn, formatDate, formatCurrency } from "@/lib/utils";
 import type { Commission, Lead, User, Offer } from "@/generated/prisma/client";
 import type { CommissionStatus } from "@/types";
 
@@ -27,26 +28,10 @@ interface Props {
   isSuperAdmin: boolean;
 }
 
-function formatDate(date: Date | null): string {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-EG", {
-    style: "currency",
-    currency: "EGP",
-    minimumFractionDigits: 0,
-  }).format(amount);
-}
-
 export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
   const t = useTranslations("commissions");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [commissions, setCommissions] = useState<CommissionWithRelations[]>(initial);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
@@ -95,20 +80,20 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
   return (
     <div className="rounded-xl border overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label={t("title")}>
           <thead className="border-b bg-muted/40">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.candidate")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.offer")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.candidate")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.offer")}</th>
               {isSuperAdmin && (
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.recruiter")}</th>
+                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.recruiter")}</th>
               )}
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.amount")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.eligible")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.paid")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.created")}</th>
-              {isSuperAdmin && <th className="w-10" />}
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.amount")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.eligible")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.paid")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.created")}</th>
+              {isSuperAdmin && <th scope="col" className="w-10" />}
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -134,19 +119,19 @@ export function CommissionTable({ commissions: initial, isSuperAdmin }: Props) {
                   <td className="px-4 py-3 text-muted-foreground">{c.recruiter.name}</td>
                 )}
                 <td className="px-4 py-3 font-medium tabular-nums">
-                  {formatCurrency(c.amount)}
+                  {formatCurrency(c.amount, undefined, locale)}
                 </td>
                 <td className="px-4 py-3">
                   <CommissionStatusBadge status={c.status} />
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(c.eligibleDate)}
+                  {formatDate(c.eligibleDate, locale)}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(c.paidDate)}
+                  {formatDate(c.paidDate, locale)}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(c.createdAt)}
+                  {formatDate(c.createdAt, locale)}
                 </td>
                 {isSuperAdmin && (
                   <td className="px-2 py-3">

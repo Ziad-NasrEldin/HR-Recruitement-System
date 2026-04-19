@@ -31,8 +31,8 @@ export async function OfferCard({ offer }: OfferCardProps) {
   const salary = offer.salaryDetails as SalaryDetails | null;
 
   return (
-    <Link href={`/offers/${offer.id}`} className="block group">
-      <Card className="h-full transition-shadow group-hover:ring-ring/30">
+    <Link href={`/offers/${offer.id}`} className="block group" aria-label={`${offer.company} - ${offer.accountType}`}>
+      <Card className="h-full transition-shadow group-hover:ring-ring/30 group-focus-visible:ring-2 group-focus-visible:ring-ring outline-none">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="line-clamp-1 text-base">{offer.company}</CardTitle>

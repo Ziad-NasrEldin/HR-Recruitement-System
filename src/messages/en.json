@@ -114,7 +114,7 @@
       "commissionAmount": "Commission Amount",
       "commissionPeriod": "Commission Period (days)"
     },
-    "detail": {
+"detail": {
       "pipelineStage": "Pipeline Stage",
       "profile": "Profile",
       "linkedOffer": "Linked Offer",
@@ -125,7 +125,11 @@
       "commission": "Commission",
       "noVoiceNotes": "No voice notes yet.",
       "previousApplications": "Previous Applications",
-      "recruiter": "Recruiter"
+      "recruiter": "Recruiter",
+      "interview": "Interview",
+      "trainingStart": "Training Start",
+      "commissionEligible": "Commission Eligible",
+      "commissionPerDays": "{amount} / {days} days"
     },
     "status": {
       "SOURCED": "Sourced",
@@ -167,7 +171,14 @@
       "language": "Language",
       "duration": "Duration",
       "status": "Status",
-      "openFile": "Open file ↗"
+      "openFile": "Open file ↗",
+      "fileUrl": "File URL",
+      "save": "Save",
+      "saving": "Saving…",
+      "saveFailed": "Failed to save voice note",
+      "networkError": "Network error. Please try again.",
+      "cancel": "Cancel",
+      "requiredField": "This field is required"
     },
     "timeline": {
       "voiceNoteRecorded": "Voice note recorded",
@@ -544,12 +555,15 @@
   "reminders": {
     "title": "Reminders",
     "due": "Due",
-    "overdue": "Overdue",
+    "overdue": "overdue",
     "today": "Today",
     "upcoming": "Upcoming",
     "noReminders": "No reminders",
     "complete": "Complete",
     "snooze": "Snooze",
-    "markDone": "Mark as done"
+    "markDone": "Mark as done",
+    "loading": "Loading\u2026",
+    "empty": "No upcoming reminders",
+    "viewAllLeads": "View all leads"
   }
 }

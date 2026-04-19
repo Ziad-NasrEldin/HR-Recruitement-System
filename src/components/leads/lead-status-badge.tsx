@@ -24,7 +24,7 @@ export function LeadStatusBadge({ status }: LeadStatusBadgeProps) {
   const t = useTranslations("leads");
 
   return (
-    <Badge variant="outline" className={STATUS_CLASSES[status]}>
+    <Badge variant="outline" className={STATUS_CLASSES[status]} aria-label={t(`status.${status}`)}>
       {t(`status.${status}`)}
     </Badge>
   );

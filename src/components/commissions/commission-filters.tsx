@@ -61,6 +61,7 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
         className="w-36"
         value={status}
         onChange={(e) => router.push(buildUrl({ status: e.target.value }))}
+        aria-label={t("filters.allStatuses")}
       >
         <option value="">{t("filters.allStatuses")}</option>
         <option value="PENDING">{t("status.PENDING")}</option>
@@ -104,12 +105,14 @@ export function CommissionFilters({ offers, recruiters, isSuperAdmin }: Props) {
         className="w-36"
         value={dateFrom}
         onChange={(e) => router.push(buildUrl({ dateFrom: e.target.value }))}
+        aria-label={t("filters.fromDate")}
       />
       <Input
         type="date"
         className="w-36"
         value={dateTo}
         onChange={(e) => router.push(buildUrl({ dateTo: e.target.value }))}
+        aria-label={t("filters.toDate")}
       />
 
       {/* Clear */}

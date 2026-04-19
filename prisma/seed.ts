@@ -20,7 +20,13 @@ async function main() {
   });
 
   if (existingAdmin) {
-    console.log("Super admin already exists. Skipping.");
+    console.log("Super admin already exists. Updating password...");
+    const passwordHash = await bcrypt.hash(password, 12);
+    await prisma.user.update({
+      where: { email },
+      data: { passwordHash },
+    });
+    console.log("Password updated.");
     return;
   }
 

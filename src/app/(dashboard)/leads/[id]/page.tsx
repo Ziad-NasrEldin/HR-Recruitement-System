@@ -1,13 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import {
   ChevronLeft, Pencil, Phone, Mail, MessageCircle, Globe,
   GraduationCap, Shield, MapPin, Briefcase, FileText, DollarSign, Calendar,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeadStatusBadge } from "@/components/leads/lead-status-badge";
@@ -22,17 +22,11 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-function formatDate(date: Date | null) {
-  if (!date) return "—";
-  return new Intl.DateTimeFormat("en-EG", { dateStyle: "medium", timeStyle: "short" }).format(
-    new Date(date)
-  );
-}
-
 export default async function LeadDetailPage({ params }: PageProps) {
   const { id } = await params;
   const session = await auth();
   const t = await getTranslations("leads");
+  const locale = await getLocale();
 
   const lead = await prisma.lead.findUnique({
     where: { id },
@@ -169,7 +163,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                   <DollarSign className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-xs text-muted-foreground">{t("detail.commission")}</p>
-                    <p>{lead.offer.commissionAmount.toLocaleString()} EGP / {lead.offer.commissionPeriodDays} days</p>
+                    <p>{t("detail.commissionPerDays", { amount: lead.offer.commissionAmount.toLocaleString(), days: lead.offer.commissionPeriodDays })}</p>
                   </div>
                 </div>
               </CardContent>
@@ -183,15 +177,15 @@ export default async function LeadDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               {[
-                { icon: Calendar, label: "Interview", value: lead.interviewDate },
-                { icon: Calendar, label: "Training Start", value: lead.trainingStartDate },
-                { icon: Calendar, label: "Commission Eligible", value: lead.commissionEligibleDate },
+                { icon: Calendar, label: t("detail.interview"), value: lead.interviewDate },
+                { icon: Calendar, label: t("detail.trainingStart"), value: lead.trainingStartDate },
+                { icon: Calendar, label: t("detail.commissionEligible"), value: lead.commissionEligibleDate },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex gap-2">
                   <Icon className="h-4 w-4 shrink-0 text-muted-foreground mt-0.5" />
                   <div>
                     <p className="text-xs text-muted-foreground">{label}</p>
-                    <p>{formatDate(value)}</p>
+                    <p>{formatDateTime(value, locale)}</p>
                   </div>
                 </div>
               ))}
@@ -266,7 +260,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
                 <CardTitle>{t("detail.notes")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm whitespace-pre-wrap">{lead.notes}</p>
+                <p className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto">{lead.notes}</p>
               </CardContent>
             </Card>
           )}

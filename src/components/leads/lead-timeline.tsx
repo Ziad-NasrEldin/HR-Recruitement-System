@@ -1,6 +1,6 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Mic, Bell, BellOff, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import type { VoiceNote, FollowUpReminder } from "@/generated/prisma/client";
 
 const REMINDER_TYPE_KEYS: Record<string, string> = {
@@ -29,13 +29,6 @@ interface LeadTimelineProps {
   reminders: FollowUpReminder[];
 }
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-EG", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(date));
-}
-
 function formatDuration(seconds: number) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -44,6 +37,7 @@ function formatDuration(seconds: number) {
 
 export async function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps) {
   const t = await getTranslations("leads.timeline");
+  const locale = await getLocale();
   const items: TimelineItem[] = [
     ...voiceNotes.map((vn) => ({
       id: vn.id,
@@ -82,7 +76,7 @@ export async function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps)
               </div>
               <div className={cn("pb-4 min-w-0 flex-1", isLast && "pb-0")}>
                 <p className="text-sm font-medium">{t("voiceNoteRecorded")}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{formatDate(item.date)}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{formatDateTime(item.date, locale)}</p>
                 <div className="mt-1.5 rounded-md border bg-muted/40 p-2 text-xs space-y-1">
                   <p className="text-muted-foreground">{t("language")}: <span className="text-foreground">{vn.language}</span></p>
                   {vn.duration && (
@@ -140,9 +134,9 @@ export async function LeadTimeline({ voiceNotes, reminders }: LeadTimelineProps)
                 {REMINDER_TYPE_KEYS[reminder.type] ? t(REMINDER_TYPE_KEYS[reminder.type]) : reminder.type}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {t("due")}: {formatDate(item.date)}
+                {t("due")}: {formatDateTime(item.date, locale)}
                 {reminder.isCompleted && reminder.completedAt && (
-                  <> · {t("completed")} {formatDate(new Date(reminder.completedAt))}</>
+                  <> · {t("completed")} {formatDateTime(new Date(reminder.completedAt), locale)}</>
                 )}
                 {isOverdue && !reminder.isCompleted && (
                   <span className="text-destructive"> · {t("overdue")}</span>

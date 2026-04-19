@@ -27,8 +27,8 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="h-4 w-4 text-muted-foreground" />
-      <Select value={currentLocale} onChange={onLocaleChange}>
+      <Globe className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+      <Select value={currentLocale} onChange={onLocaleChange} aria-label="Language">
         {LOCALES.map((locale) => (
           <option key={locale.code} value={locale.code}>
             {locale.name}

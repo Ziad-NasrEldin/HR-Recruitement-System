@@ -11,6 +11,7 @@ export function ImportOffersButton() {
   const tErrors = useTranslations("errors");
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const router = useRouter();
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -18,6 +19,7 @@ export function ImportOffersButton() {
     if (!file) return;
 
     setLoading(true);
+    setMessage(null);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -26,14 +28,14 @@ export function ImportOffersButton() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(tErrors("importFailed", { error: data.error }));
+        setMessage({ type: "error", text: tErrors("importFailed", { error: data.error }) });
         return;
       }
 
-      alert(t("importSuccess", { count: data.created, skipped: data.skipped }));
+      setMessage({ type: "success", text: t("importSuccess", { count: data.created, skipped: data.skipped }) });
       router.refresh();
     } catch {
-      alert(tErrors("networkError"));
+      setMessage({ type: "error", text: tErrors("networkError") });
     } finally {
       setLoading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -41,13 +43,14 @@ export function ImportOffersButton() {
   }
 
   return (
-    <>
+    <div className="inline-flex flex-col gap-2">
       <input
         ref={inputRef}
         type="file"
         accept=".xlsx,.xls"
         className="hidden"
         onChange={handleFile}
+        aria-label={t("form.importExcel")}
       />
       <Button
         variant="outline"
@@ -57,6 +60,11 @@ export function ImportOffersButton() {
         <Upload className="size-4" />
         {loading ? t("form.importing") : t("form.importExcel")}
       </Button>
-    </>
+      {message && (
+        <p className={`text-xs rounded-md px-3 py-1.5 ${message.type === "success" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400" : "bg-destructive/10 text-destructive"}`}>
+          {message.text}
+        </p>
+      )}
+    </div>
   );
 }

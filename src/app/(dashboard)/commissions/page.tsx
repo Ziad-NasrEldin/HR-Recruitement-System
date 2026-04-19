@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { CommissionTable } from "@/components/commissions/commission-table";
 import { CommissionFilters } from "@/components/commissions/commission-filters";
@@ -31,6 +32,7 @@ interface PageProps {
 export default async function CommissionsPage({ searchParams }: PageProps) {
   const t = await getTranslations("commissions");
   const tCommon = await getTranslations("common");
+  const locale = await getLocale();
   const session = await auth();
   const params = await searchParams;
 
@@ -126,14 +128,6 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
     return `/commissions?${sp.toString()}`;
   };
 
-  function formatCurrency(amount: number) {
-    return new Intl.NumberFormat("en-EG", {
-      style: "currency",
-      currency: "EGP",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -145,7 +139,7 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {(["PENDING", "ELIGIBLE", "PAID"] as CommissionStatus[]).map((s) => (
           <div key={s} className="rounded-xl border bg-card p-4 space-y-1">
             <div className="flex items-center justify-between">
@@ -155,7 +149,7 @@ export default async function CommissionsPage({ searchParams }: PageProps) {
               </span>
             </div>
             <p className="text-sm text-muted-foreground tabular-nums">
-              {formatCurrency(summary[s].total)}
+              {formatCurrency(summary[s].total, undefined, locale)}
             </p>
           </div>
         ))}

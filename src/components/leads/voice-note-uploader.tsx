@@ -75,7 +75,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
     <form onSubmit={handleSubmit} className="rounded-lg border bg-muted/30 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">{t("addVoiceNote")}</p>
-        <button type="button" onClick={reset} className="text-muted-foreground hover:text-foreground">
+        <button type="button" onClick={reset} className="text-muted-foreground hover:text-foreground" aria-label={t("cancel")}>
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -83,7 +83,7 @@ export function VoiceNoteUploader({ leadId }: VoiceNoteUploaderProps) {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <div className="space-y-1.5">
-        <Label htmlFor="vn-url">File URL *</Label>
+        <Label htmlFor="vn-url">{t("fileUrl")} *</Label>
         <Input
           id="vn-url"
           type="url"

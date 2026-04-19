@@ -248,7 +248,7 @@ export function LeadForm({ lead, offers }: LeadFormProps) {
       </Card>
 
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
+        <Button type="button" variant="outline" onClick={() => router.push("/leads")} disabled={loading}>
           {t("common.cancel")}
         </Button>
         <Button type="submit" disabled={loading}>

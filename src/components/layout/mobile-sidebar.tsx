@@ -75,7 +75,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0">
         {/* SheetTitle required for accessibility with @base-ui/react dialog */}
-        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+        <SheetTitle className="sr-only">{t("dashboard")}</SheetTitle>
         <div className="flex h-14 items-center border-b px-6">
           <Link
             href="/dashboard"
@@ -86,7 +86,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
             <span>HR Recruit</span>
           </Link>
         </div>
-        <nav className="flex flex-col gap-1 p-4">
+        <nav className="flex flex-col gap-1 p-4" aria-label="Main navigation">
           {items.map((item) => {
             const Icon = iconMap[item.icon];
             const navKey = Object.entries(navKeyMap).find(([_, v]) => item.href.includes(v))?.[0] || "";
@@ -102,6 +102,7 @@ export function MobileSidebar({ role }: MobileSidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive

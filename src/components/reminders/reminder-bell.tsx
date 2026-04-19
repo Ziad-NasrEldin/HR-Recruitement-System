@@ -24,36 +24,12 @@ interface Reminder {
   recruiter: { id: string; name: string };
 }
 
-const REMINDER_TYPE_LABELS: Record<string, string> = {
-  PRE_INTERVIEW: "Pre-Interview",
-  POST_INTERVIEW: "Post-Interview",
-  DAY_10: "Day 10 Check-in",
-  DAY_15: "Day 15 Check-in",
-  DAY_30: "Day 30 Check-in",
-};
-
-const REMINDER_TYPE_LABELS_AR: Record<string, string> = {
-  PRE_INTERVIEW: "قبل المقابلة",
-  POST_INTERVIEW: "بعد المقابلة",
-  DAY_10: "متابعة اليوم العاشر",
-  DAY_15: "متابعة اليوم الخامس عشر",
-  DAY_30: "متابعة اليوم الثلاثين",
-};
-
-const REMINDER_TYPE_LABELS_FR: Record<string, string> = {
-  PRE_INTERVIEW: "Avant l'entretien",
-  POST_INTERVIEW: "Après l'entretien",
-  DAY_10: "Jour 10",
-  DAY_15: "Jour 15",
-  DAY_30: "Jour 30",
-};
-
-const REMINDER_TYPE_LABELS_DE: Record<string, string> = {
-  PRE_INTERVIEW: "Vor dem Interview",
-  POST_INTERVIEW: "Nach dem Interview",
-  DAY_10: "Tag 10",
-  DAY_15: "Tag 15",
-  DAY_30: "Tag 30",
+const REMINDER_TYPE_LABELS: Record<string, Record<string, string>> = {
+  PRE_INTERVIEW: { en: "Pre-Interview", ar: "قبل المقابلة", fr: "Avant l'entretien", de: "Vor dem Interview" },
+  POST_INTERVIEW: { en: "Post-Interview", ar: "بعد المقابلة", fr: "Après l'entretien", de: "Nach dem Interview" },
+  DAY_10: { en: "Day 10 Check-in", ar: "متابعة اليوم العاشر", fr: "Jour 10", de: "Tag 10" },
+  DAY_15: { en: "Day 15 Check-in", ar: "متابعة اليوم الخامس عشر", fr: "Jour 15", de: "Tag 15" },
+  DAY_30: { en: "Day 30 Check-in", ar: "متابعة اليوم الثلاثين", fr: "Jour 30", de: "Tag 30" },
 };
 
 function formatDueDate(dateStr: string, locale: string): string {
@@ -87,9 +63,15 @@ function formatDueDate(dateStr: string, locale: string): string {
   return `Due in ${diffDays} days`;
 }
 
+function getReminderTypeLabel(type: string, locale: string): string {
+  const labels = REMINDER_TYPE_LABELS[type];
+  if (!labels) return type;
+  return labels[locale] ?? labels.en ?? type;
+}
+
 export function ReminderBell() {
-  const t = useTranslations("facebookGroups");
-  const tReminders = useTranslations("reminders");
+  const t = useTranslations("reminders");
+  const tNav = useTranslations("nav");
   const locale = useLocale();
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [overdue, setOverdue] = useState<Reminder[]>([]);
@@ -157,10 +139,10 @@ export function ReminderBell() {
 
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>Reminders</span>
+          <span>{t("title")}</span>
           {overdueCount > 0 && (
             <Badge variant="destructive" className="text-xs">
-              {overdueCount} overdue
+              {overdueCount} {t("overdue")}
             </Badge>
           )}
         </DropdownMenuLabel>
@@ -168,11 +150,11 @@ export function ReminderBell() {
 
         {loading ? (
           <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-            Loading…
+            {t("loading")}
           </div>
         ) : reminders.length === 0 ? (
           <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-            No upcoming reminders
+            {t("empty")}
           </div>
         ) : (
           <div className="max-h-80 overflow-y-auto">
@@ -197,7 +179,7 @@ export function ReminderBell() {
                         {reminder.lead.name}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {REMINDER_TYPE_LABELS[reminder.type] ?? reminder.type}
+                        {REMINDER_TYPE_LABELS[reminder.type]?.[locale] ?? reminder.type}
                       </p>
                       <p
                         className={cn(
@@ -211,7 +193,8 @@ export function ReminderBell() {
                     <button
                       onClick={(e) => markComplete(reminder.id, e)}
                       className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
-                      title={tReminders("markDone")}
+                      title={t("markDone")}
+                      aria-label={t("markDone")}
                     >
                       <CheckCircle2 className="h-4 w-4" />
                     </button>
@@ -230,8 +213,9 @@ export function ReminderBell() {
                 href="/leads"
                 onClick={() => setOpen(false)}
                 className="text-xs text-primary hover:underline"
+                aria-label={tNav("leads")}
               >
-                View all leads →
+                {t("viewAllLeads")}
               </Link>
             </div>
           </>

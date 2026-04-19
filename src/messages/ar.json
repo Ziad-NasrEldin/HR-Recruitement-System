@@ -91,7 +91,7 @@
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ"
     },
-"form": {
+    "form": {
       "company": "الشركة",
       "accountType": "نوع الحساب",
       "language": "اللغة",
@@ -351,17 +351,7 @@
     "pageDescription": "إدارة أعضاء فريقك وإمكانية وصولهم.",
     "createUser": "إنشاء مستخدم",
     "createUserDescription": "إضافة حساب مجند أو مدير جديد",
-    "editUserPage": "تعديل المستخدم",
-    "table": {
-      "name": "الاسم",
-      "role": "الدور",
-      "status": "الحالة",
-      "trialEnds": "تنتهي التجربة",
-      "expires": "ينتهي",
-      "leads": "العملاء المحتملين",
-      "joined": "تاريخ الانضمام",
-      "actions": "الإجراءات"
-    }
+    "editUserPage": "تعديل المستخدم"
   },
   "postGenerator": {
     "title": "منشئ المنشورات",
@@ -541,7 +531,7 @@
     "requiredField": "هذا الحقل مطلوب"
   },
   "reminders": {
-    "title": "التذكيرات",
+    "title": "التنبيهات",
     "due": "مستحق",
     "overdue": "متأخر",
     "today": "اليوم",
@@ -549,6 +539,9 @@
     "noReminders": "لا توجد تذكيرات",
     "complete": "مكتمل",
     "snooze": "تأجيل",
-    "markDone": "تحديد كمكتمل"
+    "markDone": "تم",
+    "loading": "جاري التحميل…",
+    "empty": "لا توجد تنبيهات قادمة",
+    "viewAllLeads": "عرض جميع العملاء"
   }
 }

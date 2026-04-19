@@ -18,7 +18,7 @@ export async function OfferStatusBadge({ status }: OfferStatusBadgeProps) {
   }
   return (
     <Badge variant="secondary" className="text-muted-foreground">
-      {t("status.ON_HOLD")}
+      {t(`status.${status}`)}
     </Badge>
   );
 }

@@ -348,7 +348,7 @@ export function OfferForm({ offer }: OfferFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.back()}
+          onClick={() => router.push("/offers")}
           disabled={loading}
         >
           {t("cancel")}

@@ -42,7 +42,7 @@ export async function Header() {
             base-nova: DropdownMenuTrigger is @base-ui/react/menu Trigger which renders a <button>.
             No asChild needed — place Avatar directly inside; the trigger button wraps it.
           */}
-          <DropdownMenuTrigger className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <DropdownMenuTrigger className="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="User menu">
             <Avatar className="h-8 w-8">
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>

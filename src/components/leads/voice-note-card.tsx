@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Sparkles, CheckCircle2, XCircle, Clock, ChevronDown, ChevronUp,
   ExternalLink, Pencil, Loader2,
@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import type { VoiceNote } from "@/generated/prisma/client";
 
 const STATUS_CONFIG = {
@@ -45,17 +45,6 @@ const SCORE_COLORS: Record<string, string> = {
   FAIL: "bg-red-100 text-red-700",
 };
 
-function formatDate(date: Date | null): string {
-  if (!date) return "";
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 function formatDuration(seconds: number | null): string {
   if (!seconds) return "";
   const m = Math.floor(seconds / 60);
@@ -70,6 +59,7 @@ interface Props {
 
 export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
   const t = useTranslations("leads.voiceNote");
+  const locale = useLocale();
   const [vn, setVn] = useState<VoiceNote>(initial);
   const [expanded, setExpanded] = useState(false);
   const [assessing, setAssessing] = useState(false);
@@ -163,7 +153,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
           </div>
           <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
             {vn.duration && <span>{t("duration")}: {formatDuration(vn.duration)}</span>}
-            {hasAI && <span>{t("assessed", { date: formatDate(vn.assessedAt) })}</span>}
+            {hasAI && <span>{t("assessed", { date: formatDate(vn.assessedAt, locale) })}</span>}
           </div>
         </div>
 
@@ -217,6 +207,7 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
             rel="noopener noreferrer"
             className="inline-flex h-7 w-7 items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title={t("openAudioFile")}
+            aria-label={t("openAudioFile")}
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
@@ -275,10 +266,11 @@ export function VoiceNoteCard({ voiceNote: initial, isSuperAdmin }: Props) {
       {/* Override panel */}
       {overrideOpen && isSuperAdmin && (
         <div className="border-t px-4 py-3 space-y-3 bg-muted/20">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <label htmlFor="override-status" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             {t("overrideDecision")}
-          </p>
+          </label>
           <Select
+            id="override-status"
             value={overrideStatus}
             onChange={(e) => setOverrideStatus(e.target.value)}
             className="w-44"

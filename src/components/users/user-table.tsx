@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { UserStatusBadge } from "./user-status-badge";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { Pencil, ToggleLeft, ToggleRight, Users } from "lucide-react";
 import type { Role } from "@/types";
 
@@ -27,18 +27,10 @@ interface Props {
   currentUserId: string;
 }
 
-function formatDate(date: Date | null): string {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 export function UserTable({ users: initial, currentUserId }: Props) {
   const t = useTranslations("settings");
   const tCommon = useTranslations("common");
+  const locale = useLocale();
   const [users, setUsers] = useState<UserRow[]>(initial);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const router = useRouter();
@@ -74,17 +66,17 @@ export function UserTable({ users: initial, currentUserId }: Props) {
   return (
     <div className="rounded-xl border overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label={t("title")}>
           <thead className="border-b bg-muted/40">
             <tr>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.name")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.role")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.trialEnds")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.expires")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.leads")}</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.joined")}</th>
-              <th className="px-4 py-3 text-right font-medium text-muted-foreground">{t("table.actions")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.name")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.role")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.status")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.trialEnds")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.expires")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.leads")}</th>
+              <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">{t("table.joined")}</th>
+              <th scope="col" className="px-4 py-3 text-right font-medium text-muted-foreground">{t("table.actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -105,27 +97,26 @@ export function UserTable({ users: initial, currentUserId }: Props) {
                   />
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(u.trialEndsAt)}
+                  {formatDate(u.trialEndsAt, locale)}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(u.accountExpiresAt)}
+                  {formatDate(u.accountExpiresAt, locale)}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground tabular-nums">
                   {u._count.leads}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {formatDate(u.createdAt)}
+                  {formatDate(u.createdAt, locale)}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       href={`/settings/users/${u.id}/edit`}
                       className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8")}
-                      title={tCommon("edit")}
+                      aria-label={tCommon("edit")}
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Link>
-                    {/* Don&apos;t allow toggling own account */}
                     {u.id !== currentUserId && (
                       <Button
                         variant="ghost"
@@ -134,6 +125,7 @@ export function UserTable({ users: initial, currentUserId }: Props) {
                         onClick={() => toggleActive(u.id)}
                         disabled={togglingId === u.id}
                         title={u.isActive ? t("deactivate") : t("activate")}
+                        aria-label={u.isActive ? t("deactivate") : t("activate")}
                       >
                         {u.isActive ? (
                           <ToggleRight className="h-4 w-4 text-primary" />

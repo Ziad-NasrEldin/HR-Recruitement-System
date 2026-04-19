@@ -531,14 +531,17 @@
     "requiredField": "This field is required"
   },
   "reminders": {
-    "title": "Reminders",
+    "title": "Erinnerungen",
     "due": "Due",
-    "overdue": "Overdue",
+    "overdue": "überfällig",
     "today": "Today",
     "upcoming": "Upcoming",
     "noReminders": "No reminders",
     "complete": "Complete",
     "snooze": "Snooze",
-    "markDone": "Mark as done"
+    "markDone": "Erledigt",
+    "loading": "Laden…",
+    "empty": "Keine anstehenden Erinnerungen",
+    "viewAllLeads": "Alle Leads anzeigen"
   }
 }

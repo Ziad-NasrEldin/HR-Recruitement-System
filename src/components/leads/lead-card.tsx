@@ -19,8 +19,8 @@ export function LeadCard({ lead, showRecruiter = false }: LeadCardProps) {
   const t = useTranslations("leads");
 
   return (
-    <Link href={`/leads/${lead.id}`} className="block group">
-      <Card className="h-full transition-shadow group-hover:ring-ring/30">
+    <Link href={`/leads/${lead.id}`} className="block group" aria-label={`${lead.name} - ${t("status." + lead.status)}`}>
+      <Card className="h-full transition-shadow group-hover:ring-ring/30 group-focus-visible:ring-2 group-focus-visible:ring-ring outline-none">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="line-clamp-1 text-base">{lead.name}</CardTitle>

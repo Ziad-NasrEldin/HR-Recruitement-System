@@ -90,7 +90,7 @@
       "fromDate": "Date de début",
       "toDate": "Date de fin"
     },
-"form": {
+    "form": {
       "company": "Entreprise",
       "accountType": "Type de compte",
       "language": "Langue",
@@ -350,17 +350,7 @@
     "pageDescription": "Gérez les membres de votre équipe et leurs accès.",
     "createUser": "Créer un utilisateur",
     "createUserDescription": "Ajouter un nouveau compte recruteur ou administrateur",
-    "editUserPage": "Modifier l'utilisateur",
-    "table": {
-      "name": "Nom",
-      "role": "Rôle",
-      "status": "Statut",
-      "trialEnds": "Fin d'essai",
-      "expires": "Expire",
-      "leads": "Prospects",
-      "joined": "Inscrit",
-      "actions": "Actions"
-    }
+    "editUserPage": "Modifier l'utilisateur"
   },
   "postGenerator": {
     "title": "Générateur de publications",
@@ -417,7 +407,7 @@
       "nextGroup": "Groupe suivant"
     }
   },
-"campaigns": {
+  "campaigns": {
     "title": "Campagnes",
     "active": "Actif",
     "scheduled": "Programmé",
@@ -542,12 +532,15 @@
   "reminders": {
     "title": "Rappels",
     "due": "Dû",
-    "overdue": "En retard",
+    "overdue": "en retard",
     "today": "Aujourd'hui",
     "upcoming": "À venir",
     "noReminders": "Pas de rappels",
     "complete": "Terminé",
     "snooze": "Reporter",
-    "markDone": "Marquer comme terminé"
+    "markDone": "Terminé",
+    "loading": "Chargement…",
+    "empty": "Aucun rappel à venir",
+    "viewAllLeads": "Voir tous les leads"
   }
 }
