@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HR Recruitment System
 
-## Getting Started
+A recruiter CRM for moving candidates from a Facebook group post to a paid commission — without losing the thread in a spreadsheet.
 
-First, run the development server:
+Built for recruiting desks that source BPO and similar roles, screen voice notes, and get paid when a hire sticks.
+
+- Track leads through sourced, interviewed, in training, and commission paid
+- Keep job offers (salary, shift, work model, commission) next to the people you send
+- Score voice notes with AI language assessment, then approve or reject
+- Generate Facebook posts and run campaigns against a group list
+- See pipeline and commission analytics, in English or Arabic (also German and French)
+
+The GitHub repo is named HR-Recruitement-System (historical spelling). The product name is HR Recruitment System.
+
+## Run locally
+
+Needs Node.js 22.12+, the node package manager, and PostgreSQL. There is no public site on this repo.
 
 ```bash
+cp .env.example .env
+npm install
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Unauthenticated visits go to login; a signed-in user lands on the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Env keys, seed admin, and the module map live in [`docs/local-setup.md`](docs/local-setup.md).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How it works
 
-## Learn More
+Next.js 16 + NextAuth, Prisma on PostgreSQL, and next-intl for RTL Arabic. Recruiters own leads; super-admins also get post generation, campaigns, Facebook groups, and user settings. Voice notes store a transcription and an English-level score when assessment is run.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Built by [Ziad Ahmed](https://github.com/Ziad-NasrEldin) at [MaVoid](https://mavoid.com).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Website](https://mavoid.com) · [LinkedIn](https://linkedin.com/in/ziad-ahmed-634202332) · [GitHub](https://github.com/Ziad-NasrEldin)
